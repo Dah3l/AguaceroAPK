@@ -154,7 +154,7 @@ private fun PantallaBusqueda(
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp),
                 verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(14.dp)
             ) {
-                androidx.compose.foundation.lazy.items(resultados, key = { it.id }) { evento ->
+                items(resultados, key = { it.id }) { evento ->
                     com.aguacero.app.ui.components.TarjetaEvento(
                         evento = evento,
                         categoria = modelo.categoriaDe(evento),
