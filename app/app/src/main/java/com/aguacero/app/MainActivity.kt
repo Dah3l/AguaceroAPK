@@ -109,7 +109,7 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
                 ) {
                     Image(
                         painter = androidx.compose.ui.res.painterResource(
-                            id = com.aguacero.app.R.drawable.ic_logo_frontal
+                            id = com.aguacero.app.R.drawable.logo_aguacero
                         ),
                         contentDescription = "Logo Aguacero",
                         modifier = Modifier.size(36.dp)
