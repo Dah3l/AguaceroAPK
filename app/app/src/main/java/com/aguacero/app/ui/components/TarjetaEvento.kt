@@ -38,7 +38,10 @@ import coil.request.ImageRequest
 import com.aguacero.app.R
 import com.aguacero.app.model.Categoria
 import com.aguacero.app.model.Evento
+import com.aguacero.app.util.aLocalDate
 import com.aguacero.app.util.formatearFechaCorta
+import java.time.format.TextStyle
+import java.util.Locale
 
 /** Badge de categoría con el color y emoji definidos en el JSON. */
 @Composable
@@ -81,7 +84,13 @@ fun TarjetaEvento(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column {
-            // Imagen del flyer con carga diferida y placeholder del logo
+            // Imagen del flyer con badge de fecha superpuesto
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(170.dp)
+                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+            ) {
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(evento.imagen)
@@ -115,6 +124,35 @@ fun TarjetaEvento(
                     else -> SubcomposeAsyncImageContent()
                 }
             }
+
+            // Badge de fecha (día + mes) superpuesto
+            val f = evento.fecha.aLocalDate()
+            if (f != null) {
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(10.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White.copy(alpha = 0.95f))
+                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = f.dayOfMonth.toString(),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = f.month.getDisplayName(TextStyle.SHORT, Locale("es"))
+                            .replace(".", "").uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            } // fin Box imagen
 
             Row(
                 modifier = Modifier
@@ -200,5 +238,104 @@ fun EstadoVacio(icono: androidx.compose.ui.graphics.vector.ImageVector, mensaje:
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}
+
+/** Tarjeta grande para el carrusel de Destacados: imagen de fondo con degradado. */
+@Composable
+fun TarjetaDestacado(
+    evento: Evento,
+    categoria: Categoria?,
+    alClic: () -> Unit,
+    modificador: Modifier = Modifier
+) {
+    Card(
+        onClick = alClic,
+        modifier = modificador
+            .width(300.dp)
+            .height(190.dp),
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Imagen de fondo
+            SubcomposeAsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(evento.imagen)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Flyer de ${evento.titulo}",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                when (painter.state) {
+                    is AsyncImagePainter.State.Loading,
+                    is AsyncImagePainter.State.Error -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    androidx.compose.ui.graphics.Brush.linearGradient(
+                                        colors = listOf(
+                                            MaterialTheme.colorScheme.primary,
+                                            MaterialTheme.colorScheme.tertiary
+                                        )
+                                    )
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = androidx.compose.ui.res.painterResource(R.drawable.ic_logo_frontal),
+                                contentDescription = null,
+                                tint = Color.White.copy(alpha = 0.7f),
+                                modifier = Modifier.size(64.dp)
+                            )
+                        }
+                    }
+                    else -> SubcomposeAsyncImageContent()
+                }
+            }
+            // Degradado inferior
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        androidx.compose.ui.graphics.Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.75f)),
+                            startY = 80f
+                        )
+                    )
+            )
+            // Contenido
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(14.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text("⭐", style = MaterialTheme.typography.labelMedium)
+                    InsigniaCategoria(categoria)
+                }
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = evento.titulo,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "📅 ${formatearFechaCorta(evento.fecha)} · 📍 ${evento.lugar}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.85f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
     }
 }
