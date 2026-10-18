@@ -1,0 +1,29 @@
+<!-- Logo vectorial de Aguacero: nube con gotas de lluvia sobre escenario -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Fondo -->
+    <path
+        android:fillColor="#2E7CD6"
+        android:pathData="M0,0h108v108h-108z" />
+    <!-- Nube -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M34,52a12,12 0,1 1,4 -23.5A16,16 0,0 1,70 30a11,11 0,0 1,4 21.5z" />
+    <!-- Gotas -->
+    <path
+        android:fillColor="#BBDEFB"
+        android:pathData="M40,60c0,0 -5,7 -5,10a5,5 0,0 0,10 0C45,67 40,60 40,60z" />
+    <path
+        android:fillColor="#BBDEFB"
+        android:pathData="M54,64c0,0 -5,7 -5,10a5,5 0,0 0,10 0C59,71 54,64 54,64z" />
+    <path
+        android:fillColor="#BBDEFB"
+        android:pathData="M68,60c0,0 -5,7 -5,10a5,5 0,0 0,10 0C73,67 68,60 68,60z" />
+    <!-- Escenario / nota musical -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M48,88l-6,8h28l-6,-8z" />
+</vector>
