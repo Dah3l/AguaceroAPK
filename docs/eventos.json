@@ -60,9 +60,11 @@
       "lugar": "Sala Charlie Chaplin",
       "direccion": "Calle 23 e/ L y M, Vedado",
       "precio": "100 CUP general",
-      "contacto": [],
+      "contacto": [
+        "+53 56803949"
+      ],
       "linkWeb": null,
-      "imagen": "",
+      "imagen": "https://www.google.com/imgres?q=Elden%20Ring&imgurl=https%3A%2F%2Fp325k7wa.twic.pics%2Fhigh%2Felden-ring%2Felden-ring%2F08-shadow-of-the-erdtree%2Felden-ring-expansion-SOTE%2F00-page-content%2FER_SOTEEdition_EditionKeyArtnew.jpg%3Ftwic%3Dv1%2Fresize%3D760%2Fstep%3D10%2Fquality%3D80&imgrefurl=https%3A%2F%2Fes.bandainamcoent.eu%2Felden-ring%2Felden-ring&docid=R4j7YhhVyNttZM&tbnid=VnMyrduL09VtgM&vet=12ahUKEwio_tq7k8SXAxVJkO4BHf0TAdIQnPAOegUI2AIQAA..i&w=760&h=428&hcb=2&ved=2ahUKEwio_tq7k8SXAxVJkO4BHf0TAdIQnPAOegUI2AIQAA",
       "categoriaId": "artes-visuales",
       "organizador": "ICAIC",
       "destacado": false,
