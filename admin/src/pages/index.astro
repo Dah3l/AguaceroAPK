@@ -1,219 +1,97 @@
 ---
-// Página principal: lista de eventos con filtros, búsqueda y acciones.
-import Plantabase from '../layouts/Plantabase.astro';
+import Base from '../layouts/Base.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
-<Plantabase titulo="Eventos" seccion="eventos">
-  <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+<Base titulo="Eventos">
+  <div class="flex items-center justify-between mb-6">
     <div>
-      <h1 class="text-2xl font-bold text-aguacero-oscuro">📅 Eventos</h1>
-      <p class="text-sm text-slate-500" id="contador-eventos">Cargando…</p>
+      <h1 class="text-2xl font-bold text-slate-900">Eventos</h1>
+      <p id="contador" class="text-sm text-slate-500 mt-0.5">Cargando…</p>
     </div>
     <a href={`${base}/nuevo`}
-      class="rounded-lg bg-aguacero hover:bg-aguacero-oscuro text-white font-semibold px-4 py-2.5 text-sm transition-colors shadow">
+      class="rounded-xl bg-aguacero hover:bg-aguacero-oscuro text-white font-semibold px-4 py-2.5 text-sm transition-colors shadow-sm">
       ＋ Nuevo evento
     </a>
   </div>
 
-  <!-- Filtros -->
-  <div class="bg-white rounded-2xl shadow p-4 mb-5 flex flex-wrap gap-3 items-end">
-    <div class="flex-1 min-w-[180px]">
-      <label for="filtro-texto" class="block text-xs font-medium text-slate-500 mb-1">Buscar</label>
-      <input id="filtro-texto" type="search" placeholder="Título, lugar o descripción…"
-        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero" />
-    </div>
-    <div>
-      <label for="filtro-categoria" class="block text-xs font-medium text-slate-500 mb-1">Categoría</label>
-      <select id="filtro-categoria"
-        class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-aguacero">
-        <option value="">Todas</option>
-      </select>
-    </div>
-    <div>
-      <label for="filtro-fecha" class="block text-xs font-medium text-slate-500 mb-1">Desde el</label>
-      <input id="filtro-fecha" type="date"
-        class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-aguacero" />
-    </div>
-    <label class="flex items-center gap-2 text-sm pb-2 cursor-pointer select-none">
-      <input id="filtro-pasados" type="checkbox" checked class="accent-aguacero w-4 h-4" />
-      Mostrar pasados
-    </label>
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mb-5">
+    <input id="buscar" type="search" placeholder="Buscar por título, lugar…"
+      class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero" />
   </div>
 
-  <!-- Tabla -->
-  <div class="bg-white rounded-2xl shadow overflow-x-auto">
-    <table class="w-full text-sm">
-      <thead>
-        <tr class="text-left text-xs uppercase text-slate-500 border-b border-slate-200">
-          <th class="px-4 py-3">Flyer</th>
-          <th class="px-4 py-3">Título</th>
-          <th class="px-4 py-3">Fecha y hora</th>
-          <th class="px-4 py-3">Categoría</th>
-          <th class="px-4 py-3 text-right">Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="cuerpo-tabla"></tbody>
-    </table>
-    <p id="sin-resultados" class="hidden text-center text-slate-400 py-10">No hay eventos que coincidan con los filtros.</p>
-  </div>
-</Plantabase>
+  <div id="lista" class="space-y-3"></div>
 
-<script>
-  import { cargarDatos } from '../lib/datos';
-  import { publicarCartelera } from '../lib/publicar';
-  import { leerToken } from '../lib/sesion';
-  import type { Categoria, Evento, Usuario } from '../lib/tipos';
+  <script>
+    import { supabase, type Evento, type Categoria } from '../lib/supabase';
 
-  const RUTA_EDITAR = new URL('editar/', window.location.href).href;
+    let eventos: Evento[] = [];
+    let categorias: Record<string, Categoria> = {};
 
-  async function iniciarPanelEventos() {
-  let todos: Evento[] = [];
-  let categorias: Categoria[] = [];
-  let usuariosLista: Usuario[] = [];
-
-  const cuerpo = document.getElementById('cuerpo-tabla')!;
-  const contador = document.getElementById('contador-eventos')!;
-  const sinResultados = document.getElementById('sin-resultados')!;
-  const entradaTexto = document.getElementById('filtro-texto') as HTMLInputElement;
-  const seleccionCategoria = document.getElementById('filtro-categoria') as HTMLSelectElement;
-  const entradaFecha = document.getElementById('filtro-fecha') as HTMLInputElement;
-  const casillaPasados = document.getElementById('filtro-pasados') as HTMLInputElement;
-
-  function hoyISO(): string {
-    return new Date().toISOString().slice(0, 10);
-  }
-
-  function fechaBonita(iso: string): string {
-    try {
-      return new Date(`${iso}T12:00:00`).toLocaleDateString('es-ES', {
-        weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
-      });
-    } catch {
-      return iso;
+    async function cargar() {
+      const [{ data: ev }, { data: cat }] = await Promise.all([
+        supabase.from('eventos').select('*').order('fecha', { ascending: true }),
+        supabase.from('categorias').select('*'),
+      ]);
+      eventos = ev ?? [];
+      (cat ?? []).forEach((c) => (categorias[c.id] = c));
+      pintar();
     }
-  }
 
-  function categoriaDe(evento: Evento): Categoria | undefined {
-    return categorias.find((c) => c.id === evento.categoriaId);
-  }
-
-  function dibujar() {
-    const texto = entradaTexto.value.trim().toLowerCase();
-    const categoria = seleccionCategoria.value;
-    const desde = entradaFecha.value;
-    const verPasados = casillaPasados.checked;
-
-    const filtrados = todos.filter((e) => {
-      if (!verPasados && e.fecha < hoyISO()) return false;
-      if (categoria && e.categoriaId !== categoria) return false;
-      if (desde && e.fecha < desde) return false;
-      if (texto) {
-        const pila = `${e.titulo} ${e.lugar} ${e.descripcion}`.toLowerCase();
-        if (!pila.includes(texto)) return false;
-      }
-      return true;
-    });
-
-    cuerpo.innerHTML = '';
-    sinResultados.classList.toggle('hidden', filtrados.length > 0);
-    contador.textContent = `${filtrados.length} de ${todos.length} eventos`;
-
-    for (const evento of filtrados) {
-      const pasada = evento.fecha < hoyISO();
-      const categoriaEvento = categoriaDe(evento);
-      const fila = document.createElement('tr');
-      fila.className = `border-b border-slate-100 align-middle ${pasada ? 'opacity-40' : ''} hover:bg-slate-50`;
-      fila.innerHTML = `
-        <td class="px-4 py-2">
-          ${evento.imagen
-            ? `<img src="${evento.imagen}" alt="" class="w-12 h-12 object-cover rounded-lg bg-slate-100" loading="lazy"
-                 onerror="this.replaceWith(Object.assign(document.createElement('div'),{textContent:'🌧️',className:'w-12 h-12 rounded-lg bg-aguacero-suave flex items-center justify-center'}))" />`
-            : `<div class="w-12 h-12 rounded-lg bg-aguacero-suave flex items-center justify-center">🌧️</div>`}
-        </td>
-        <td class="px-4 py-2">
-          <p class="font-semibold">${evento.destacado ? '⭐ ' : ''}${escaparHTML(evento.titulo)}</p>
-          <p class="text-xs text-slate-500">${escaparHTML(evento.lugar)}</p>
-        </td>
-        <td class="px-4 py-2 whitespace-nowrap">${fechaBonita(evento.fecha)}<span class="text-slate-500"> · ${evento.hora}</span></td>
-        <td class="px-4 py-2 whitespace-nowrap">
-          ${categoriaEvento
-            ? `<span class="inline-block rounded-full px-2.5 py-1 text-xs font-medium" style="background:${categoriaEvento.color}22;color:${categoriaEvento.color}">${categoriaEvento.emoji} ${escaparHTML(categoriaEvento.nombre)}</span>`
-            : '<span class="text-xs text-red-500">sin categoría</span>'}
-        </td>
-        <td class="px-4 py-2 text-right whitespace-nowrap"></td>`;
-
-      const celdaAcciones = fila.lastElementChild as HTMLElement;
-      celdaAcciones.append(
-        boton('✏️', 'Editar', 'text-aguacero hover:bg-aguacero-suave rounded-lg px-2 py-1', () => {
-          window.location.href = `${RUTA_EDITAR}?id=${evento.id}`;
-        }),
-        boton('📄', 'Duplicar', 'text-slate-600 hover:bg-slate-100 rounded-lg px-2 py-1', () => duplicar(evento)),
-        boton('🗑️', 'Eliminar', 'text-red-600 hover:bg-red-50 rounded-lg px-2 py-1', () => eliminar(evento))
+    function pintar(filtro = '') {
+      const lista = document.getElementById('lista')!;
+      const f = filtro.toLowerCase();
+      const vis = eventos.filter((e) =>
+        !f || e.titulo.toLowerCase().includes(f) || e.lugar.toLowerCase().includes(f)
       );
-      cuerpo.append(fila);
+
+      (document.getElementById('contador') as HTMLElement).textContent =
+        `${vis.length} evento${vis.length === 1 ? '' : 's'}`;
+
+      if (!vis.length) {
+        lista.innerHTML = `<div class="text-center py-12 text-slate-400">
+          <div class="text-4xl mb-2">📅</div><p>No hay eventos</p></div>`;
+        return;
+      }
+
+      const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+      lista.innerHTML = vis.map((e) => {
+        const cat = e.categoria_id ? categorias[e.categoria_id] : null;
+        return `
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-4">
+          ${e.imagen ? `<img src="${e.imagen}" class="w-16 h-16 rounded-xl object-cover shrink-0" />`
+            : `<div class="w-16 h-16 rounded-xl bg-aguacero-suave flex items-center justify-center text-2xl shrink-0">${cat?.emoji ?? '📅'}</div>`}
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <h3 class="font-semibold text-slate-900 truncate">${e.titulo}</h3>
+              ${e.destacado ? '<span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">⭐ Destacado</span>' : ''}
+            </div>
+            <p class="text-sm text-slate-500 truncate">📍 ${e.lugar} · 📅 ${e.fecha} ${e.hora.slice(0, 5)}</p>
+            ${cat ? `<span class="inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-medium" style="background:${cat.color}20;color:${cat.color}">${cat.emoji} ${cat.nombre}</span>` : ''}
+          </div>
+          <div class="flex gap-1 shrink-0">
+            <a href="${base}/editar?id=${e.id}" title="Editar"
+              class="w-9 h-9 rounded-xl hover:bg-aguacero-suave flex items-center justify-center text-lg">✏️</a>
+            <button data-del="${e.id}" title="Eliminar"
+              class="w-9 h-9 rounded-xl hover:bg-red-50 flex items-center justify-center text-lg">🗑️</button>
+          </div>
+        </div>`;
+      }).join('');
+
+      lista.querySelectorAll('[data-del]').forEach((b) =>
+        b.addEventListener('click', async () => {
+          const id = (b as HTMLElement).dataset.del!;
+          if (!confirm('¿Eliminar este evento?')) return;
+          const { error } = await supabase.from('eventos').delete().eq('id', id);
+          if (error) (window as any).toast('Error al eliminar', 'error');
+          else { (window as any).toast('Evento eliminado'); cargar(); }
+        })
+      );
     }
-  }
 
-  function boton(texto: string, titulo: string, clases: string, alPulsar: () => void): HTMLButtonElement {
-    const b = document.createElement('button');
-    b.textContent = texto;
-    b.title = titulo;
-    b.className = clases;
-    b.addEventListener('click', alPulsar);
-    return b;
-  }
+    document.getElementById('buscar')?.addEventListener('input', (e) =>
+      pintar((e.target as HTMLInputElement).value)
+    );
 
-  function escaparHTML(texto: string): string {
-    return texto.replace(/[&<>"']/g, (c) =>
-      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
-  }
-
-  function exigirToken(): boolean {
-    if (!leerToken()) {
-      window.alert('Falta el token de GitHub. Añádelo en Ajustes del navegador o vuelve a entrar.');
-      return false;
-    }
-    return true;
-  }
-
-  async function eliminar(evento: Evento) {
-    if (!confirm(`¿Eliminar "${evento.titulo}"? Esta acción se publica en el repo.`)) return;
-    if (!exigirToken()) return;
-    todos = todos.filter((e) => e.id !== evento.id);
-    await publicarCartelera({ categorias, eventos: todos }, usuariosLista,
-      `Aguacero admin: elimina evento "${evento.titulo}"`);
-    dibujar();
-  }
-
-  async function duplicar(evento: Evento) {
-    if (!exigirToken()) return;
-    const copia: Evento = {
-      ...evento,
-      id: crypto.randomUUID(),
-      titulo: `${evento.titulo} (copia)`,
-      destacado: false,
-      fechaPublicacion: new Date().toISOString().slice(0, 19),
-    };
-    todos = [...todos, copia];
-    await publicarCartelera({ categorias, eventos: todos }, usuariosLista,
-      `Aguacero admin: duplica evento "${evento.titulo}"`);
-    window.location.href = `${RUTA_EDITAR}?id=${copia.id}`;
-  }
-
-  // Carga inicial
-  const datos = await cargarDatos();
-  todos = [...datos.cartelera.eventos].sort((a, b) => b.fecha.localeCompare(a.fecha));
-  categorias = datos.cartelera.categorias;
-  usuariosLista = datos.usuarios;
-
-  seleccionCategoria.innerHTML =
-    '<option value="">Todas</option>' +
-    categorias.map((c) => `<option value="${c.id}">${c.emoji} ${escaparHTML(c.nombre)}</option>`).join('');
-
-  [entradaTexto, seleccionCategoria, entradaFecha, casillaPasados].forEach((control) =>
-    control.addEventListener('input', dibujar)
-  );
-  dibujar();
-}
-iniciarPanelEventos().catch((error) => console.error('Panel de eventos:', error));
-</script>
+    cargar();
+  </script>
+</Base>
