@@ -39,6 +39,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         categoria_id: (fd.get('categoria_id') as string) || null,
         organizador: fd.get('organizador') || '',
         destacado: (form.querySelector('[name="destacado"]') as HTMLInputElement).checked,
+        publicado: false,
       });
 
       if (error) {
@@ -46,7 +47,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         btn.disabled = false;
         btn.textContent = '💾 Guardar';
       } else {
-        (window as any).toast('Evento creado ✓');
+        (window as any).toast('📝 Borrador guardado');
         const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         setTimeout(() => (window.location.href = `${base}/`), 800);
       }
