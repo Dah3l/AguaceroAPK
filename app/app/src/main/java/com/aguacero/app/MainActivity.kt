@@ -24,10 +24,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import com.aguacero.app.ui.components.BarraNavegacion
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
@@ -96,41 +99,31 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
                     .windowInsetsPadding(WindowInsets.statusBars)
                     .padding(horizontal = 16.dp, vertical = 14.dp)
             ) {
-                Text(
-                    "🌧️ Aguacero",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Image(
+                        painter = androidx.compose.ui.res.painterResource(
+                            id = com.aguacero.app.R.drawable.ic_logo_frontal
+                        ),
+                        contentDescription = "Logo Aguacero",
+                        modifier = Modifier.size(36.dp)
+                    )
+                    Text(
+                        "Aguacero",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
             }
         },
         bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    selected = pestana == 0,
-                    onClick = { pestana = 0 },
-                    icon = { Icon(Icons.Filled.Home, contentDescription = "Inicio") },
-                    label = { Text("Inicio") }
-                )
-                NavigationBarItem(
-                    selected = pestana == 1,
-                    onClick = { pestana = 1 },
-                    icon = { Icon(Icons.Filled.Favorite, contentDescription = "Favoritos") },
-                    label = { Text("Favoritos") }
-                )
-                NavigationBarItem(
-                    selected = pestana == 2,
-                    onClick = { pestana = 2 },
-                    icon = { Icon(Icons.Filled.Search, contentDescription = "Buscar") },
-                    label = { Text("Buscar") }
-                )
-                NavigationBarItem(
-                    selected = pestana == 3,
-                    onClick = { pestana = 3 },
-                    icon = { Icon(Icons.Filled.Settings, contentDescription = "Ajustes") },
-                    label = { Text("Ajustes") }
-                )
-            }
+            BarraNavegacion(
+                pestanaActual = pestana,
+                alCambiar = { pestana = it }
+            )
         }
     ) { valoresInternos ->
         androidx.compose.foundation.layout.Box(modifier = Modifier.padding(valoresInternos)) {
