@@ -71,6 +71,7 @@ const enlaces = [
   document.getElementById('btn-salir')?.addEventListener('click', () => {
     localStorage.removeItem('aguacero_sesion');
     localStorage.removeItem('aguacero_token');
+    localStorage.removeItem('aguacero_repo');
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     window.location.href = `${base}/login`;
   });
