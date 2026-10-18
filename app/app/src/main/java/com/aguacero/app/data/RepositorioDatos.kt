@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 class RepositorioDatos(private val contexto: Context) {
 
     companion object {
-        const val URL_EVENTOS = "https://dah3l.github.io/aguacero/eventos.json"
+        const val URL_EVENTOS = "https://dah3l.github.io/AguaceroAPK/docs/eventos.json"
         private const val ARCHIVO_CACHA = "eventos_cache.json"
         private const val DURACION_CACHE_MS = 24L * 60L * 60L * 1000L // 24 horas
     }
