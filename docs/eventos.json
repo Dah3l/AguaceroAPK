@@ -51,6 +51,24 @@
   ],
   "eventos": [
     {
+      "id": "mve3n7ha7mbqyo",
+      "titulo": "Evento Elden Ring",
+      "descripcion": "Evento Elden Ring ",
+      "fecha": "2026-10-18",
+      "hora": "13:28",
+      "horaApertura": "13:28",
+      "lugar": "Sala Charlie Chaplin",
+      "direccion": "Calle 23 e/ L y M, Vedado",
+      "precio": "100 CUP general",
+      "contacto": [],
+      "linkWeb": null,
+      "imagen": "",
+      "categoriaId": "artes-visuales",
+      "organizador": "ICAIC",
+      "destacado": false,
+      "fechaPublicacion": "2026-10-18T17:28:31.318136+00:00"
+    },
+    {
       "id": "mve2e2j307vklr",
       "titulo": "Evento de prueba",
       "descripcion": "Evento de prueba ",
