@@ -51,11 +51,11 @@ class ModeloCartelera(app: Application) : AndroidViewModel(app) {
         cargar(false)
     }
 
-    fun cargar(forzarRefresco: Boolean) {
+    fun cargar(forzarRefresco: Boolean = false) {
         viewModelScope.launch {
             _estado.value = _estado.value.copy(cargando = true, error = null)
             try {
-                val resultado = repositorio.obtener(forzarRefresco)
+                val resultado = repositorio.obtener()
                 _estado.value = _estado.value.copy(
                     cargando = false,
                     error = null,
