@@ -29,6 +29,7 @@ export interface Evento {
   organizador: string;
   destacado: boolean;
   fecha_publicacion: string;
+  publicado: boolean;
 }
 
 export function nuevoId(): string {
