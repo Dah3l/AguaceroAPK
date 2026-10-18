@@ -1,0 +1,66 @@
+{
+  "categorias": [
+    { "id": "musica", "nombre": "Música", "emoji": "🎶", "color": "#2E7CD6" },
+    { "id": "teatro", "nombre": "Teatro", "emoji": "🎭", "color": "#9C27B0" },
+    { "id": "danza", "nombre": "Danza", "emoji": "💃", "color": "#E91E63" },
+    { "id": "arte", "nombre": "Artes Visuales", "emoji": "🎨", "color": "#FF9800" },
+    { "id": "cine", "nombre": "Cine", "emoji": "🎬", "color": "#607D8B" },
+    { "id": "festividad", "nombre": "Festividades", "emoji": "🎉", "color": "#4CAF50" }
+  ],
+  "eventos": [
+    {
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "titulo": "Rumba en el Patio de Tempo Habana",
+      "descripcion": "Noche de rumba cubana con los grupos invitados. El evento incluye un trago de bienvenida. Ambientación al aire libre, trae tu botella y disfruta de la percusión habanera en vivo.",
+      "fecha": "2026-11-14",
+      "hora": "19:00",
+      "horaApertura": "17:00",
+      "lugar": "Tempo Habana",
+      "direccion": "Calle B, 153 e/ Línea y Calzada, Vedado",
+      "precio": "1000 CUP incluye trago",
+      "contacto": ["+53 58335927"],
+      "linkWeb": "https://tempohabana.example.com",
+      "imagen": "https://dah3l.github.io/aguacero/img/ejemplo-tempo.jpg",
+      "categoriaId": "musica",
+      "organizador": "Must Have y Tempo",
+      "destacado": true,
+      "fechaPublicacion": "2026-10-17T10:00:00"
+    },
+    {
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "titulo": "Función Infantil: Los Cuentos de Papito Pío",
+      "descripcion": "Obra de teatro para niños en el Teatro Villanueva. Títeres, música en vivo y mucha diversión. Entrada diferenciada para niños y adultos.",
+      "fecha": "2026-10-25",
+      "hora": "16:00",
+      "horaApertura": "15:30",
+      "lugar": "Teatro Villanueva",
+      "direccion": "Calle Tacón No. 16, entre Cuba y San Ignacio, Habana Vieja",
+      "precio": "500 CUP niños / 1000 CUP adultos",
+      "contacto": ["+53 72044444"],
+      "linkWeb": "",
+      "imagen": "https://dah3l.github.io/aguacero/img/ejemplo-teatro.jpg",
+      "categoriaId": "teatro",
+      "organizador": "Teatro Villanueva",
+      "destacado": false,
+      "fechaPublicacion": "2026-10-16T09:30:00"
+    },
+    {
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "titulo": "Exposición 'La Habana en Azul'",
+      "descripcion": "Inauguración de la exposición colectiva de pintura contemporánea en el Centro Wilfredo Lam. Obras de diez artistas jóvenes cubanos. Entrada libre.",
+      "fecha": "2026-11-07",
+      "hora": "18:00",
+      "horaApertura": "",
+      "lugar": "Centro Cultural Wilfredo Lam",
+      "direccion": "Calle San Lázaro 65, Vedado",
+      "precio": "Entrada libre",
+      "contacto": [],
+      "linkWeb": "",
+      "imagen": "https://dah3l.github.io/aguacero/img/ejemplo-arte.jpg",
+      "categoriaId": "arte",
+      "organizador": "",
+      "destacado": false,
+      "fechaPublicacion": "2026-10-15T14:00:00"
+    }
+  ]
+}
