@@ -45,12 +45,12 @@ fun BarraNavegacion(
     Box(
         modifier = modificador
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier
-                .shadow(8.dp, RoundedCornerShape(percent = 50))
+                .shadow(10.dp, RoundedCornerShape(percent = 50))
                 .clip(RoundedCornerShape(percent = 50))
                 .background(
                     Brush.horizontalGradient(
@@ -61,15 +61,15 @@ fun BarraNavegacion(
                         )
                     )
                 )
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             items.forEach { (indice, icono, descripcion) ->
                 val activo = pestanaActual == indice
                 Box(
                     modifier = Modifier
-                        .size(56.dp)
+                        .size(64.dp)
                         .clip(CircleShape)
                         .background(
                             if (activo) Color.White
@@ -82,7 +82,7 @@ fun BarraNavegacion(
                         imageVector = icono,
                         contentDescription = descripcion,
                         tint = if (activo) Color(0xFF1B5FB0) else Color.White.copy(alpha = 0.85f),
-                        modifier = Modifier.size(26.dp)
+                        modifier = Modifier.size(30.dp)
                     )
                 }
             }
