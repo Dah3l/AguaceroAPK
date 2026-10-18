@@ -1,0 +1,75 @@
+---
+// Navegación lateral (escritorio) / barra superior plegable (móvil).
+interface Props {
+  seccion: 'eventos' | 'categorias' | 'usuarios' | '';
+  nombreSesion: string;
+  usuarioSesion: string;
+  esAdmin: boolean;
+}
+const { seccion, nombreSesion, usuarioSesion, esAdmin } = Astro.props;
+
+const enlaces = [
+  { id: 'eventos', texto: 'Eventos', icono: '📅', ruta: '/' },
+  { id: 'categorias', texto: 'Categorías', icono: '🏷️', ruta: '/categorias' },
+  ...(esAdmin ? [{ id: 'usuarios', texto: 'Usuarios', icono: '👤', ruta: '/usuarios' }] : []),
+];
+---
+<header class="bg-aguacero text-white lg:bg-white lg:text-slate-800 lg:w-64 lg:shrink-0 lg:min-h-screen lg:border-r lg:border-slate-200">
+  <div class="px-4 py-3 lg:px-6 lg:py-8">
+    <a href="./" class="flex items-center gap-2 font-bold text-lg select-none">
+      <span>🌧️</span><span>Aguacero <span class="font-normal opacity-70">admin</span></span>
+    </a>
+
+    <button
+      id="btn-menu"
+      class="mt-3 lg:hidden w-full rounded-lg bg-white/15 px-3 py-2 text-left text-sm"
+      aria-expanded="false"
+      aria-controls="nav-lateral"
+    >
+      ☰ Menú
+    </button>
+
+    <nav id="nav-lateral" class="hidden mt-4 lg:block">
+      <ul class="space-y-1">
+        {
+          enlaces.map((enlace) => (
+            <li>
+              <a
+                href={`.${enlace.ruta}`}
+                aria-current={seccion === enlace.id ? 'page' : undefined}
+                class:list={[
+                  'block rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  seccion === enlace.id
+                    ? 'bg-aguacero-suave text-aguacero-oscuro lg:bg-aguacero lg:text-white'
+                    : 'hover:bg-white/10 lg:hover:bg-slate-100',
+                ]}
+              >
+                {enlace.icono} {enlace.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-6 border-t border-slate-200 lg:block hidden pt-4 text-sm">
+        <p class="font-semibold">{nombreSesion || usuarioSesion}</p>
+        <p class="text-slate-500">{esAdmin ? 'Administrador' : 'Editor'}</p>
+        <button id="btn-salir" class="mt-2 text-red-600 hover:underline">Cerrar sesión</button>
+      </div>
+    </nav>
+  </div>
+</header>
+<script>
+  const boton = document.getElementById('btn-menu');
+  const nav = document.getElementById('nav-lateral');
+  boton?.addEventListener('click', () => {
+    const abierta = nav?.classList.toggle('hidden') === false;
+    boton.setAttribute('aria-expanded', String(abierta));
+  });
+  document.getElementById('btn-salir')?.addEventListener('click', () => {
+    localStorage.removeItem('aguacero_sesion');
+    localStorage.removeItem('aguacero_token');
+    const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+    window.location.href = `${base}/login`;
+  });
+</script>

@@ -1,0 +1,56 @@
+---
+// Plantilla base del panel: sidebar, área de contenido y toast global.
+// La protección de rutas se hace en el cliente (sitio estático en GitHub Pages):
+// si no hay sesión en localStorage, la scripts de cada página redirigen a /login.
+import '../styles.css';
+import { leerSesion } from '../lib/sesion';
+import MenuLateral from '../components/MenuLateral.astro';
+import AvisoGlobal from '../components/AvisoGlobal.astro';
+
+interface Props {
+  titulo: string;
+  conMenu?: boolean;
+  seccion?: 'eventos' | 'categorias' | 'usuarios' | '';
+}
+
+const { titulo, conMenu = true, seccion = '' } = Astro.props;
+const sesion = leerSesion();
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{titulo} · Aguacero Admin</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌧️</text></svg>" />
+  </head>
+  <body class="bg-slate-100 text-slate-800 min-h-screen">
+    {
+      conMenu ? (
+        <div class="lg:flex lg:min-h-screen">
+          <MenuLateral
+            seccion={seccion}
+            nombreSesion={sesion?.nombre ?? ''}
+            usuarioSesion={sesion?.usuario ?? ''}
+            esAdmin={sesion?.esAdmin ?? false}
+          />
+          <main class="flex-1 min-w-0 px-4 py-6 sm:px-6 lg:px-10 lg:py-8 max-w-6xl mx-auto w-full">
+            <slot />
+          </main>
+        </div>
+      ) : (
+        <main class="min-h-screen flex items-center justify-center px-4 py-8">
+          <slot />
+        </main>
+      )
+    }
+    <AvisoGlobal />
+    <script>
+      // Protección client-side de las páginas internas.
+      if (!localStorage.getItem('aguacero_sesion')) {
+        const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+        window.location.replace(`${base}/login`);
+      }
+    </script>
+  </body>
+</html>

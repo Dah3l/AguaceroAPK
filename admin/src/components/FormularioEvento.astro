@@ -1,0 +1,108 @@
+---
+// Formulario reutilizable de evento (crear/editar). Todos los campos del modelo.
+interface Props {
+  categorias: { id: string; nombre: string; emoji: string }[];
+}
+const { categorias } = Astro.props;
+
+const campo = 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero bg-white';
+const etiqueta = 'block text-sm font-medium mb-1';
+const requerido = 'text-red-500';
+---
+<form id="formulario-evento" class="bg-white rounded-2xl shadow p-5 sm:p-6 space-y-5">
+  <div>
+    <label for="titulo" class={etiqueta}>Título <span class={requerido}>*</span></label>
+    <input id="titulo" type="text" required placeholder="Rumba en el Patio de Tempo Habana" class={campo} />
+  </div>
+
+  <div>
+    <label for="descripcion" class={etiqueta}>Descripción <span class={requerido}>*</span></label>
+    <textarea id="descripcion" rows="5" required placeholder="Detalles del evento, acepta saltos de línea…" class={campo}></textarea>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div>
+      <label for="fecha" class={etiqueta}>Fecha <span class={requerido}>*</span></label>
+      <input id="fecha" type="date" required class={campo} />
+    </div>
+    <div>
+      <label for="hora" class={etiqueta}>Hora <span class={requerido}>*</span></label>
+      <input id="hora" type="time" required class={campo} />
+    </div>
+    <div>
+      <label for="hora-apertura" class={etiqueta}>Hora de apertura</label>
+      <input id="hora-apertura" type="time" class={campo} />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label for="lugar" class={etiqueta}>Lugar <span class={requerido}>*</span></label>
+      <input id="lugar" type="text" required placeholder="Tempo Habana" class={campo} />
+    </div>
+    <div>
+      <label for="categoria" class={etiqueta}>Categoría <span class={requerido}>*</span></label>
+      <select id="categoria" required class={campo}>
+        <option value="">— Selecciona —</option>
+        {categorias.map((c) => <option value={c.id}>{c.emoji} {c.nombre}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label for="direccion" class={etiqueta}>Dirección <span class={requerido}>*</span></label>
+    <input id="direccion" type="text" required placeholder="Calle B, 153 e/ Línea y Calzada, Vedado" class={campo} />
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label for="precio" class={etiqueta}>Precio</label>
+      <input id="precio" type="text" placeholder="1000 CUP incluye trago" class={campo} />
+    </div>
+    <div>
+      <label for="organizador" class={etiqueta}>Organizador</label>
+      <input id="organizador" type="text" placeholder="Must Have y Tempo" class={campo} />
+    </div>
+  </div>
+
+  <div>
+    <label class={etiqueta}>Contactos (teléfonos)</label>
+    <div id="lista-contactos" class="space-y-2"></div>
+    <button type="button" id="btn-anadir-contacto"
+      class="mt-2 text-sm text-aguacero font-medium hover:underline">＋ Añadir teléfono</button>
+  </div>
+
+  <div>
+    <label for="link-web" class={etiqueta}>Link web</label>
+    <input id="link-web" type="url" placeholder="https://…" class={campo} />
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+    <div>
+      <label for="imagen-archivo" class={etiqueta}>Imagen (flyer)</label>
+      <input id="imagen-archivo" type="file" accept="image/*"
+        class={campo + ' file:mr-3 file:rounded-md file:border-0 file:bg-aguacero-suave file:px-3 file:py-1.5 file:text-aguacero-oscuro'} />
+      <p class="text-xs text-slate-400 mt-1">Se sube a docs/img/ del repo al guardar.</p>
+    </div>
+    <div>
+      <label for="imagen-url" class={etiqueta}>… o URL de imagen existente</label>
+      <input id="imagen-url" type="url" placeholder="https://…" class={campo} />
+      <img id="vista-imagen" alt="Vista previa del flyer" class="hidden mt-2 max-h-40 rounded-lg border border-slate-200 object-cover" />
+    </div>
+  </div>
+
+  <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
+    <input id="destacado" type="checkbox" class="accent-aguacero w-4 h-4" />
+    ⭐ Destacar este evento en la portada de la app
+  </label>
+
+  <p id="error-formulario" class="hidden text-sm text-red-600"></p>
+
+  <div class="flex flex-wrap gap-3 pt-2">
+    <button type="submit" id="btn-guardar"
+      class="rounded-lg bg-aguacero hover:bg-aguacero-oscuro text-white font-semibold px-6 py-2.5 transition-colors">
+      💾 Guardar y publicar
+    </button>
+    <a href="./" class="rounded-lg border border-slate-300 px-6 py-2.5 text-sm font-medium hover:bg-slate-50">Cancelar</a>
+  </div>
+</form>

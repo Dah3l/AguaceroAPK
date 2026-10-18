@@ -1,0 +1,176 @@
+---
+// CRUD de categorías: nombre, emoji y color. No se puede borrar una con eventos.
+import Plantabase from '../../layouts/Plantabase.astro';
+---
+<Plantabase titulo="Categorías" seccion="categorias">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+    <div>
+      <h1 class="text-2xl font-bold text-aguacero-oscuro">🏷️ Categorías</h1>
+      <p class="text-sm text-slate-500">Se usan como filtro y color en la app.</p>
+    </div>
+  </div>
+
+  <!-- Formulario crear/editar -->
+  <form id="formulario-categoria" class="bg-white rounded-2xl shadow p-5 mb-6">
+    <input type="hidden" id="categoria-id-original" value="" />
+    <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr_auto] gap-3 items-end">
+      <div>
+        <label for="categoria-nombre" class="block text-sm font-medium mb-1">Nombre *</label>
+        <input id="categoria-nombre" type="text" required placeholder="Música"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero" />
+      </div>
+      <div>
+        <label for="categoria-emoji" class="block text-sm font-medium mb-1">Emoji *</label>
+        <input id="categoria-emoji" type="text" required maxlength="4" placeholder="🎶"
+          class="w-20 text-center rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero" />
+      </div>
+      <div>
+        <label for="categoria-color" class="block text-sm font-medium mb-1">Color *</label>
+        <div class="flex gap-2 items-center">
+          <input id="categoria-color" type="color" value="#2E7CD6"
+            class="h-10 w-14 rounded-lg border border-slate-300 bg-white p-1 cursor-pointer" />
+          <span id="etiqueta-color" class="text-xs text-slate-500 font-mono">#2E7CD6</span>
+        </div>
+      </div>
+      <button type="submit" id="btn-guardar-categoria"
+        class="rounded-lg bg-aguacero hover:bg-aguacero-oscuro text-white font-semibold px-5 py-2.5 text-sm transition-colors">
+        💾 Guardar
+      </button>
+    </div>
+    <p id="error-categoria" class="hidden text-sm text-red-600 mt-3"></p>
+  </form>
+
+  <!-- Lista -->
+  <div id="lista-categorias" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+</Plantabase>
+
+<script>
+  import { cargarDatos, slugId } from '../../lib/datos';
+  import { anunciandoProgreso, publicarCartelera } from '../../lib/publicar';
+  import { leerToken } from '../../lib/sesion';
+  import type { Categoria, Evento } from '../../lib/tipos';
+
+  async function iniciarPanelCategorias() {
+  let categorias: Categoria[] = [];
+  let eventos: Evento[] = [];
+  let usuariosLista: Awaited<ReturnType<typeof cargarDatos>>['usuarios'] = [];
+
+  const lista = document.getElementById('lista-categorias')!;
+  const formulario = document.getElementById('formulario-categoria') as HTMLFormElement;
+  const parrafoError = document.getElementById('error-categoria') as HTMLParagraphElement;
+  const entradaNombre = document.getElementById('categoria-nombre') as HTMLInputElement;
+  const entradaEmoji = document.getElementById('categoria-emoji') as HTMLInputElement;
+  const entradaColor = document.getElementById('categoria-color') as HTMLInputElement;
+  const etiquetaColor = document.getElementById('etiqueta-color')!;
+  const campoIdOriginal = document.getElementById('categoria-id-original') as HTMLInputElement;
+
+  entradaColor.addEventListener('input', () => (etiquetaColor.textContent = entradaColor.value));
+
+  function escapar(texto: string): string {
+    return texto.replace(/[&<>"']/g, (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+  }
+
+  function dibujar() {
+    lista.innerHTML = '';
+    for (const categoria of categorias) {
+      const usos = eventos.filter((e) => e.categoriaId === categoria.id).length;
+      const tarjeta = document.createElement('div');
+      tarjeta.className = 'bg-white rounded-2xl shadow p-4 flex items-center gap-3';
+      tarjeta.innerHTML = `
+        <span class="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center text-xl" style="background:${categoria.color}22">${categoria.emoji}</span>
+        <div class="min-w-0 flex-1">
+          <p class="font-semibold truncate">${escapar(categoria.nombre)}</p>
+          <p class="text-xs text-slate-500">${usos} evento${usos === 1 ? '' : 's'} · <span class="font-mono">${categoria.color}</span></p>
+        </div>`;
+      const acciones = document.createElement('div');
+      acciones.className = 'flex gap-1';
+      const botonEditar = document.createElement('button');
+      botonEditar.textContent = '✏️';
+      botonEditar.title = 'Editar';
+      botonEditar.className = 'rounded-lg px-2 py-1 text-aguacero hover:bg-aguacero-suave';
+      botonEditar.addEventListener('click', () => {
+        campoIdOriginal.value = categoria.id;
+        entradaNombre.value = categoria.nombre;
+        entradaEmoji.value = categoria.emoji;
+        entradaColor.value = categoria.color;
+        etiquetaColor.textContent = categoria.color;
+        formulario.scrollIntoView({ behavior: 'smooth' });
+      });
+      const botonBorrar = document.createElement('button');
+      botonBorrar.textContent = '🗑️';
+      botonBorrar.title = 'Eliminar';
+      botonBorrar.className = 'rounded-lg px-2 py-1 text-red-600 hover:bg-red-50';
+      botonBorrar.addEventListener('click', () => eliminarCategoria(categoria, usos));
+      acciones.append(botonEditar, botonBorrar);
+      tarjeta.append(acciones);
+      lista.append(tarjeta);
+    }
+  }
+
+  async function eliminarCategoria(categoria: Categoria, usos: number) {
+    if (usos > 0) {
+      parrafoError.textContent = `⚠️ No se puede eliminar "${categoria.nombre}": tiene ${usos} evento(s) asociado(s). Reasígnalos primero.`;
+      parrafoError.classList.remove('hidden');
+      return;
+    }
+    if (!confirm(`¿Eliminar la categoría "${categoria.nombre}"?`)) return;
+    if (!leerToken()) return;
+    categorias = categorias.filter((c) => c.id !== categoria.id);
+    anunciandoProgreso('Publicando categorías…');
+    const { cartelera } = await cargarDatos();
+    await publicarCartelera({ categorias, eventos: cartelera.eventos }, usuariosLista,
+      `Aguacero admin: elimina categoría "${categoria.nombre}"`);
+    dibujar();
+  }
+
+  formulario.addEventListener('submit', async (suceso) => {
+    suceso.preventDefault();
+    parrafoError.classList.add('hidden');
+    if (!leerToken()) {
+      parrafoError.textContent = 'Falta el token de GitHub para publicar.';
+      parrafoError.classList.remove('hidden');
+      return;
+    }
+    const nombre = entradaNombre.value.trim();
+    const emoji = entradaEmoji.value.trim();
+    const color = entradaColor.value;
+    if (!nombre || !emoji) {
+      parrafoError.textContent = 'Nombre y emoji son obligatorios.';
+      parrafoError.classList.remove('hidden');
+      return;
+    }
+
+    const idPrevio = campoIdOriginal.value;
+    if (idPrevio) {
+      categorias = categorias.map((c) => (c.id === idPrevio ? { ...c, nombre, emoji, color } : c));
+    } else {
+      if (categorias.some((c) => c.nombre.toLowerCase() === nombre.toLowerCase())) {
+        parrafoError.textContent = 'Ya existe una categoría con ese nombre.';
+        parrafoError.classList.remove('hidden');
+        return;
+      }
+      categorias = [...categorias, { id: slugId(nombre, categorias), nombre, emoji, color }];
+    }
+
+    anunciandoProgreso(idPrevio ? 'Actualizando categoría…' : 'Creando categoría…');
+    const { cartelera } = await cargarDatos();
+    await publicarCartelera({ categorias, eventos: cartelera.eventos }, usuariosLista,
+      `Aguacero admin: ${idPrevio ? 'actualiza' : 'crea'} categoría "${nombre}"`);
+
+    campoIdOriginal.value = '';
+    formulario.reset();
+    entradaColor.value = '#2E7CD6';
+    etiquetaColor.textContent = '#2E7CD6';
+    dibujar();
+  });
+
+  // Carga inicial
+  const datos = await cargarDatos();
+  categorias = datos.cartelera.categorias;
+  eventos = datos.cartelera.eventos;
+  usuariosLista = datos.usuarios;
+  dibujar();
+}
+iniciarPanelCategorias().catch((error) => console.error('Panel de categorías:', error));
+</script>
