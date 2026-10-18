@@ -1,0 +1,45 @@
+name: Sync Supabase → eventos.json
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Descargar datos de Supabase y generar JSON
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python3 << 'PYEOF'
+          import json, os, urllib.request
+          url = os.environ['SUPABASE_URL']
+          key = os.environ['SUPABASE_SERVICE_KEY']
+          headers = {'apikey': key, 'Authorization': f'Bearer {key}', 'Content-Type': 'application/json'}
+          def get(tabla, orden=''):
+              req = urllib.request.Request(f"{url}/rest/v1/{tabla}?select=*{orden}", headers=headers)
+              with urllib.request.urlopen(req) as r:
+                  return json.loads(r.read())
+          categorias = get('categorias', '&order=nombre')
+          eventos = get('eventos', '&order=fecha.asc,hora.asc')
+          salida = {
+              "categorias": [{"id": c["id"], "nombre": c["nombre"], "emoji": c["emoji"], "color": c["color"]} for c in categorias],
+              "eventos": [{"id": e["id"], "titulo": e["titulo"], "descripcion": e.get("descripcion") or "", "fecha": e["fecha"], "hora": (e["hora"] or "")[:5], "horaApertura": (e.get("hora_apertura") or "")[:5] or None, "lugar": e["lugar"], "direccion": e.get("direccion") or "", "precio": e.get("precio") or "", "contacto": e.get("contacto") or [], "linkWeb": e.get("link_web"), "imagen": e.get("imagen") or "", "categoriaId": e.get("categoria_id"), "organizador": e.get("organizador") or "", "destacado": bool(e.get("destacado")), "fechaPublicacion": e.get("fecha_publicacion") or ""} for e in eventos]
+          }
+          with open('docs/eventos.json', 'w', encoding='utf-8') as f:
+              json.dump(salida, f, ensure_ascii=False, indent=2)
+              f.write('\n')
+          print(f"✓ {len(eventos)} eventos, {len(categorias)} categorías")
+          PYEOF
+
+      - name: Commit si hubo cambios
+        run: |
+          git config user.name "Aguacero Sync"
+          git config user.email "sync@aguacero.local"
+          git add docs/eventos.json
+          git diff --staged --quiet || (git commit -m "🔄 Sync eventos desde Supabase" && git push)
