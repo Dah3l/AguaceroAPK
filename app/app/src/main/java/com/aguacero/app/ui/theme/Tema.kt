@@ -1,8 +1,6 @@
 package com.aguacero.app.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
@@ -13,26 +11,22 @@ private val EsquemaClaro = lightColorScheme(
     onPrimaryContainer = ClaroSobreContenedorPrimario,
     secondary = ClaroSecundario,
     onSecondary = ClaroSobrePrimario,
-    tertiary = ClaroTerciario
+    tertiary = ClaroTerciario,
+    background = androidx.compose.ui.graphics.Color(0xFFF8F9FA),
+    onBackground = androidx.compose.ui.graphics.Color(0xFF04202E),
+    surface = androidx.compose.ui.graphics.Color.White,
+    onSurface = androidx.compose.ui.graphics.Color(0xFF04202E),
+    surfaceVariant = androidx.compose.ui.graphics.Color(0xFFE1F2FA),
+    onSurfaceVariant = androidx.compose.ui.graphics.Color(0xFF0A3C55)
 )
 
-private val EsquemaOscuro = darkColorScheme(
-    primary = OscuroPrimario,
-    onPrimary = OscuroSobrePrimario,
-    primaryContainer = OscuroContenedorPrimario,
-    onPrimaryContainer = OscuroSobreContenedorPrimario,
-    secondary = OscuroSecundario,
-    tertiary = OscuroTerciario
-)
-
-/** Tema de Aguacero basado en Material3 con la paleta azul del logo. */
+/** Tema de Aguacero: siempre modo claro para uniformidad. */
 @Composable
 fun TemaAguacero(
-    esModoOscuro: Boolean = isSystemInDarkTheme(),
     contenido: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colorScheme = if (esModoOscuro) EsquemaOscuro else EsquemaClaro,
+        colorScheme = EsquemaClaro,
         typography = androidx.compose.material3.Typography(),
         content = contenido
     )
