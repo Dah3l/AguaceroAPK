@@ -20,7 +20,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -130,9 +129,7 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                 "No hay eventos con estos filtros 🌤️"
             )
 
-            else -> PullToRefreshBox(
-                isRefreshing = estado.cargando,
-                onRefresh = { modelo.cargar(true) },
+            else -> Box(
                 modifier = Modifier.fillMaxSize()
             ) {
                 LazyColumn(
