@@ -107,7 +107,7 @@
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792351615557-f7mn5d.jpg",
       "categoriaId": "videojuegos",
       "organizador": "ICAIC",
-      "destacado": false,
+      "destacado": true,
       "fechaPublicacion": "2026-10-18T17:28:31.318136+00:00"
     },
     {
