@@ -52,6 +52,7 @@ import coil.compose.AsyncImage
 import com.aguacero.app.ui.ModeloCartelera
 import com.aguacero.app.util.abrirTelefono
 import com.aguacero.app.util.abrirWeb
+import com.aguacero.app.util.chatearWhatsApp
 import com.aguacero.app.util.compartirWhatsApp
 import com.aguacero.app.util.formatearFechaLarga
 import com.aguacero.app.util.textoParaCompartir
@@ -362,13 +363,25 @@ fun PantallaDetalle(
                                 color = AzulOscuro
                             )
                         }
+                        val numeroReserva = evento.contacto.firstOrNull()
                         Button(
-                            onClick = { compartirWhatsApp(contexto, textoParaCompartir(evento)) },
+                            onClick = {
+                                if (numeroReserva != null) {
+                                    chatearWhatsApp(
+                                        contexto,
+                                        numeroReserva,
+                                        "Hola, quiero reservar para: ${evento.titulo}"
+                                    )
+                                } else {
+                                    compartirWhatsApp(contexto, textoParaCompartir(evento))
+                                }
+                            },
                             colors = ButtonDefaults.buttonColors(containerColor = AzulPrimario),
                             shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier.padding(start = 16.dp)
+                            modifier = Modifier.padding(start = 16.dp),
+                            enabled = true
                         ) {
-                            Text("Compartir", fontWeight = FontWeight.Bold)
+                            Text("Reservar", fontWeight = FontWeight.Bold)
                         }
                     }
 
