@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.aguacero.app.util.CrashReporter
 import com.aguacero.app.util.crearCanalNotificaciones
 import com.aguacero.app.workers.TrabajoNuevosEventos
 import java.util.concurrent.TimeUnit
@@ -16,6 +17,7 @@ class AguaceroApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        CrashReporter.instalar(this)
         crearCanalNotificaciones(this)
 
         // El trabajo se encola siempre; dentro doWork() se comprueba
