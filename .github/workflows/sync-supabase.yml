@@ -30,7 +30,7 @@ jobs:
               with urllib.request.urlopen(req) as r:
                   return json.loads(r.read())
           categorias = get('categorias', '&order=nombre')
-          eventos = get('eventos', '&order=fecha.asc,hora.asc')
+          eventos = get('eventos', '&order=fecha.asc,hora.asc&publicado=eq.true')
           salida = {
               "categorias": [{"id": c["id"], "nombre": c["nombre"], "emoji": c["emoji"], "color": c["color"]} for c in categorias],
               "eventos": [{"id": e["id"], "titulo": e["titulo"], "descripcion": e.get("descripcion") or "", "fecha": e["fecha"], "hora": (e["hora"] or "")[:5], "horaApertura": (e.get("hora_apertura") or "")[:5] or None, "lugar": e["lugar"], "direccion": e.get("direccion") or "", "precio": e.get("precio") or "", "contacto": e.get("contacto") or [], "linkWeb": e.get("link_web"), "imagen": e.get("imagen") or "", "categoriaId": e.get("categoria_id"), "organizador": e.get("organizador") or "", "destacado": bool(e.get("destacado")), "fechaPublicacion": e.get("fecha_publicacion") or ""} for e in eventos]
