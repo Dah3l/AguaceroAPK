@@ -118,7 +118,7 @@ const { cartelera } = await cargarDatos();
         usuarios,
         `Aguacero admin: actualiza evento "${actualizado.titulo}"`
       );
-      window.location.href = '../';
+      window.location.href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
     } catch (error) {
       parrafoError.textContent = `Error al guardar: ${(error as Error).message}`;
       parrafoError.classList.remove('hidden');
