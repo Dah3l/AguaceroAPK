@@ -3,15 +3,27 @@ import Base from '../layouts/Base.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <Base titulo="Eventos">
-  <div class="flex items-center justify-between mb-6">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Eventos</h1>
       <p id="contador" class="text-sm text-slate-500 mt-0.5">Cargando…</p>
     </div>
     <a href={`${base}/nuevo`}
-      class="rounded-xl bg-aguacero hover:bg-aguacero-oscuro text-white font-semibold px-4 py-2.5 text-sm transition-colors shadow-sm">
+      class="rounded-xl bg-aguacero hover:bg-aguacero-oscuro text-white font-semibold px-4 py-2.5 text-sm transition-colors shadow-sm text-center">
       ＋ Nuevo evento
     </a>
+  </div>
+
+  <!-- Pestañas -->
+  <div class="flex gap-2 mb-5" role="tablist">
+    <button id="tab-pub" role="tab"
+      class="tab-btn flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors">
+      ✅ Publicados <span id="n-pub" class="ml-1 text-xs opacity-70"></span>
+    </button>
+    <button id="tab-bor" role="tab"
+      class="tab-btn flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors">
+      📝 Borradores <span id="n-bor" class="ml-1 text-xs opacity-70"></span>
+    </button>
   </div>
 
   <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mb-5">
@@ -21,61 +33,92 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   <div id="lista" class="space-y-3"></div>
 
+  <style>
+    .tab-btn { background: #f1f5f9; color: #64748b; }
+    .tab-btn.activa { background: #2E7CD6; color: #fff; box-shadow: 0 2px 8px rgba(46,124,214,.3); }
+  </style>
+
   <script>
     import { supabase, type Evento, type Categoria } from '../lib/supabase';
 
     let eventos: Evento[] = [];
     let categorias: Record<string, Categoria> = {};
+    let tab: 'pub' | 'bor' = 'pub';
+
+    const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     async function cargar() {
       const [{ data: ev }, { data: cat }] = await Promise.all([
         supabase.from('eventos').select('*').order('fecha', { ascending: true }),
         supabase.from('categorias').select('*'),
       ]);
-      eventos = ev ?? [];
-      (cat ?? []).forEach((c) => (categorias[c.id] = c));
+      eventos = (ev ?? []) as Evento[];
+      (cat ?? []).forEach((c: Categoria) => (categorias[c.id] = c));
+      actualizarTabs();
       pintar();
+    }
+
+    function actualizarTabs() {
+      const nPub = eventos.filter((e) => e.publicado).length;
+      const nBor = eventos.filter((e) => !e.publicado).length;
+      (document.getElementById('n-pub') as HTMLElement).textContent = `(${nPub})`;
+      (document.getElementById('n-bor') as HTMLElement).textContent = `(${nBor})`;
+      document.getElementById('tab-pub')!.classList.toggle('activa', tab === 'pub');
+      document.getElementById('tab-bor')!.classList.toggle('activa', tab === 'bor');
     }
 
     function pintar(filtro = '') {
       const lista = document.getElementById('lista')!;
       const f = filtro.toLowerCase();
-      const vis = eventos.filter((e) =>
-        !f || e.titulo.toLowerCase().includes(f) || e.lugar.toLowerCase().includes(f)
+      const vis = eventos.filter(
+        (e) =>
+          (tab === 'pub' ? e.publicado : !e.publicado) &&
+          (!f || e.titulo.toLowerCase().includes(f) || e.lugar.toLowerCase().includes(f))
       );
 
       (document.getElementById('contador') as HTMLElement).textContent =
-        `${vis.length} evento${vis.length === 1 ? '' : 's'}`;
+        `${vis.length} evento${vis.length === 1 ? '' : 's'} ${tab === 'pub' ? 'publicados' : 'en borrador'}`;
 
       if (!vis.length) {
         lista.innerHTML = `<div class="text-center py-12 text-slate-400">
-          <div class="text-4xl mb-2">📅</div><p>No hay eventos</p></div>`;
+          <div class="text-4xl mb-2">${tab === 'pub' ? '📢' : '📝'}</div>
+          <p>${tab === 'pub' ? 'No hay eventos publicados' : 'No hay borradores'}</p></div>`;
         return;
       }
 
-      const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-      lista.innerHTML = vis.map((e) => {
-        const cat = e.categoria_id ? categorias[e.categoria_id] : null;
-        return `
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-4">
-          ${e.imagen ? `<img src="${e.imagen}" class="w-16 h-16 rounded-xl object-cover shrink-0" />`
-            : `<div class="w-16 h-16 rounded-xl bg-aguacero-suave flex items-center justify-center text-2xl shrink-0">${cat?.emoji ?? '📅'}</div>`}
+      lista.innerHTML = vis
+        .map((e) => {
+          const cat = e.categoria_id ? categorias[e.categoria_id] : null;
+          const btnPub = e.publicado
+            ? `<button data-unpub="${e.id}" title="Despublicar"
+                 class="h-9 px-3 rounded-xl hover:bg-amber-50 text-amber-600 text-sm font-medium border border-amber-200">📥 Ocultar</button>`
+            : `<button data-pub="${e.id}" title="Publicar"
+                 class="h-9 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold shadow-sm">🚀 Publicar</button>`;
+          return `
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 sm:gap-4">
+          ${e.imagen ? `<img src="${e.imagen}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover shrink-0" />`
+            : `<div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-aguacero-suave flex items-center justify-center text-2xl shrink-0">${cat?.emoji ?? '📅'}</div>`}
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
               <h3 class="font-semibold text-slate-900 truncate">${e.titulo}</h3>
-              ${e.destacado ? '<span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">⭐ Destacado</span>' : ''}
+              ${e.destacado ? '<span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">⭐</span>' : ''}
+              ${!e.publicado ? '<span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-medium">📝 Borrador</span>' : ''}
             </div>
-            <p class="text-sm text-slate-500 truncate">📍 ${e.lugar} · 📅 ${e.fecha} ${e.hora.slice(0, 5)}</p>
+            <p class="text-sm text-slate-500 truncate">📍 ${e.lugar} · 📅 ${e.fecha} ${(e.hora || '').slice(0, 5)}</p>
             ${cat ? `<span class="inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-medium" style="background:${cat.color}20;color:${cat.color}">${cat.emoji} ${cat.nombre}</span>` : ''}
           </div>
-          <div class="flex gap-1 shrink-0">
-            <a href="${base}/editar?id=${e.id}" title="Editar"
-              class="w-9 h-9 rounded-xl hover:bg-aguacero-suave flex items-center justify-center text-lg">✏️</a>
-            <button data-del="${e.id}" title="Eliminar"
-              class="w-9 h-9 rounded-xl hover:bg-red-50 flex items-center justify-center text-lg">🗑️</button>
+          <div class="flex flex-col sm:flex-row gap-1 shrink-0 items-end">
+            ${btnPub}
+            <div class="flex gap-1">
+              <a href="${base}/editar?id=${e.id}" title="Editar"
+                class="w-9 h-9 rounded-xl hover:bg-aguacero-suave flex items-center justify-center text-lg">✏️</a>
+              <button data-del="${e.id}" title="Eliminar"
+                class="w-9 h-9 rounded-xl hover:bg-red-50 flex items-center justify-center text-lg">🗑️</button>
+            </div>
           </div>
         </div>`;
-      }).join('');
+        })
+        .join('');
 
       lista.querySelectorAll('[data-del]').forEach((b) =>
         b.addEventListener('click', async () => {
@@ -86,8 +129,33 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           else { (window as any).toast('Evento eliminado'); cargar(); }
         })
       );
+
+      lista.querySelectorAll('[data-pub]').forEach((b) =>
+        b.addEventListener('click', async () => {
+          const id = (b as HTMLElement).dataset.pub!;
+          const { error } = await supabase.from('eventos').update({ publicado: true }).eq('id', id);
+          if (error) (window as any).toast('Error al publicar', 'error');
+          else { (window as any).toast('🚀 Evento publicado'); cargar(); }
+        })
+      );
+
+      lista.querySelectorAll('[data-unpub]').forEach((b) =>
+        b.addEventListener('click', async () => {
+          const id = (b as HTMLElement).dataset.unpub!;
+          if (!confirm('¿Ocultar este evento de la APK?')) return;
+          const { error } = await supabase.from('eventos').update({ publicado: false }).eq('id', id);
+          if (error) (window as any).toast('Error al ocultar', 'error');
+          else { (window as any).toast('Evento movido a borradores'); cargar(); }
+        })
+      );
     }
 
+    document.getElementById('tab-pub')?.addEventListener('click', () => {
+      tab = 'pub'; actualizarTabs(); pintar((document.getElementById('buscar') as HTMLInputElement).value);
+    });
+    document.getElementById('tab-bor')?.addEventListener('click', () => {
+      tab = 'bor'; actualizarTabs(); pintar((document.getElementById('buscar') as HTMLInputElement).value);
+    });
     document.getElementById('buscar')?.addEventListener('input', (e) =>
       pintar((e.target as HTMLInputElement).value)
     );
