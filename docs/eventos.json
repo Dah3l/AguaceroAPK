@@ -51,6 +51,26 @@
   ],
   "eventos": [
     {
+      "id": "mve2e2j307vklr",
+      "titulo": "Evento de prueba",
+      "descripcion": "Evento de prueba ",
+      "fecha": "2026-10-18",
+      "hora": "14:52",
+      "horaApertura": "13:52",
+      "lugar": "Sala Charlie Chaplin",
+      "direccion": "Calle 23 e/ L y M, Vedado",
+      "precio": "100 CUP general",
+      "contacto": [
+        "+53 56803949"
+      ],
+      "linkWeb": null,
+      "imagen": "",
+      "categoriaId": "cine",
+      "organizador": "ICAIC",
+      "destacado": true,
+      "fechaPublicacion": "2026-10-18T16:53:25.079407+00:00"
+    },
+    {
       "id": "a1b2c3d4-0005-4000-8000-000000000005",
       "titulo": "Bailoterapia Gigante en el Malecón",
       "descripcion": "Clase abierta de baile con instructores y DJ invitado frente al Castillo de la Fuerza. Trae ropa cómoda y agua. Actividad gratuita para toda la familia.",
