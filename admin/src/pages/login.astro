@@ -84,7 +84,7 @@ import Plantabase from '../layouts/Plantabase.astro';
         if (token && token.trim()) {
           guardarToken(token.trim());
           const owner = window.prompt('Propietario del repo', leerRepo().owner) ?? 'dah3l';
-          const repo = window.prompt('Nombre del repo', leerRepo().repo) ?? 'aguacero';
+          const repo = window.prompt('Nombre del repo', leerRepo().repo) ?? 'AguaceroAPK';
           const rama = window.prompt('Rama destino', leerRepo().rama) ?? 'main';
           guardarRepo(owner.trim(), repo.trim(), rama.trim());
         }
