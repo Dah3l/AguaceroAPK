@@ -85,26 +85,6 @@
       "fechaPublicacion": "2026-10-18T16:53:25.079407+00:00"
     },
     {
-      "id": "mve5ssveuefbr5",
-      "titulo": "UwU",
-      "descripcion": "Prueba awaaaa ",
-      "fecha": "2026-10-18",
-      "hora": "16:25",
-      "horaApertura": "17:25",
-      "lugar": "Sala Charlie Chaplin",
-      "direccion": "Alamar Zona 7",
-      "precio": "10",
-      "contacto": [
-        "+53 56803949"
-      ],
-      "linkWeb": null,
-      "imagen": "",
-      "categoriaId": "cine",
-      "organizador": "Prueba ",
-      "destacado": true,
-      "fechaPublicacion": "2026-10-18T18:28:52.601822+00:00"
-    },
-    {
       "id": "a1b2c3d4-0005-4000-8000-000000000005",
       "titulo": "Bailoterapia Gigante en el Malecón",
       "descripcion": "Clase abierta de baile con instructores y DJ invitado frente al Castillo de la Fuerza. Trae ropa cómoda y agua. Actividad gratuita para toda la familia.",
