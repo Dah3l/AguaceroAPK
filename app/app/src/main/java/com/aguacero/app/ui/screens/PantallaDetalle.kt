@@ -63,86 +63,108 @@ fun PantallaDetalle(
 
     val evento = modelo.eventoPorId(idEvento) ?: estado.eventos.find { it.id == idEvento }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Detalle del evento") },
-                navigationIcon = {
-                    IconButton(onClick = alVolver) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
-                    }
-                },
-                actions = {
-                    if (evento != null) {
-                        IconButton(onClick = { modelo.alternarFavorito(evento.id) }) {
-                            val esFav = favoritos.contains(evento.id)
-                            Icon(
-                                imageVector = if (esFav) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                                contentDescription = "Favorito",
-                                tint = if (esFav) Color(0xFFE53935) else Color.White
-                            )
-                        }
-                    }
-                }
-            )
-        }
-    ) { valoresInternos ->
-        if (evento == null) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(valoresInternos),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text("Este evento ya no está disponible 😕")
-                Spacer(Modifier.height(12.dp))
-                Button(onClick = alVolver) { Text("Volver a la cartelera") }
-            }
-            return@Scaffold
-        }
-
-        val categoria = modelo.categoriaDe(evento)
-
+    if (evento == null) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(valoresInternos)
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 24.dp)
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            // Imagen grande del flyer
+            Text("Este evento ya no está disponible 😕")
+            Spacer(Modifier.height(12.dp))
+            Button(onClick = alVolver) { Text("Volver a la cartelera") }
+        }
+        return
+    }
+
+    val categoria = modelo.categoriaDe(evento)
+    val esFav = favoritos.contains(evento.id)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        // ---- Cabecera inmersiva ----
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(340.dp)
+        ) {
             AsyncImage(
                 model = evento.imagen,
                 contentDescription = "Flyer de ${evento.titulo}",
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            // Degradado para legibilidad
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        androidx.compose.ui.graphics.Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Black.copy(alpha = 0.4f),
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.8f)
+                            )
+                        )
+                    )
+            )
+            // Botones superiores
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp)
-                    .clip(RoundedCornerShape(16.dp))
-            )
-
-            if (categoria != null) {
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(
+                    onClick = alVolver,
+                    modifier = Modifier
+                        .clip(androidx.compose.foundation.shape.CircleShape)
+                        .background(Color.Black.copy(alpha = 0.4f))
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = Color.White)
+                }
+                IconButton(
+                    onClick = { modelo.alternarFavorito(evento.id) },
+                    modifier = Modifier
+                        .clip(androidx.compose.foundation.shape.CircleShape)
+                        .background(Color.Black.copy(alpha = 0.4f))
+                ) {
+                    Icon(
+                        imageVector = if (esFav) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favorito",
+                        tint = if (esFav) Color(0xFFE53935) else Color.White
+                    )
+                }
+            }
+            // Título superpuesto abajo
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp)
+            ) {
+                if (categoria != null) {
+                    Text(
+                        "${categoria.emoji} ${categoria.nombre}",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(Modifier.height(4.dp))
+                }
                 Text(
-                    "${categoria.emoji} ${categoria.nombre}",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = try {
-                        Color(android.graphics.Color.parseColor(categoria.color))
-                    } catch (_: Exception) {
-                        MaterialTheme.colorScheme.primary
-                    },
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    evento.titulo,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White
                 )
             }
+        }
 
-            Text(
-                evento.titulo,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
-            )
+        Column(modifier = Modifier.padding(bottom = 24.dp)) {
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(12.dp))
 
             val cuando = buildString {
                 append(formatearFechaLarga(evento.fecha))
