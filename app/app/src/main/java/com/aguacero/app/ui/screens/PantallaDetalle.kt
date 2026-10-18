@@ -147,7 +147,7 @@ fun PantallaDetalle(
             val cuando = buildString {
                 append(formatearFechaLarga(evento.fecha))
                 if (evento.hora.isNotBlank()) append(" · ${evento.hora} h")
-                if (evento.horaApertura.isNotBlank()) append(" (abre puertas ${evento.horaApertura} h)")
+                if (!evento.horaApertura.isNullOrBlank()) append(" (abre puertas ${evento.horaApertura} h)")
             }
             FilaInfo("📅 Cuándo", cuando)
 
@@ -172,8 +172,8 @@ fun PantallaDetalle(
                         Text("📞 Llamar")
                     }
                 }
-                if (evento.linkWeb.isNotBlank()) {
-                    Button(onClick = { abrirWeb(contexto, evento.linkWeb) }) {
+                if (!evento.linkWeb.isNullOrBlank()) {
+                    Button(onClick = { abrirWeb(contexto, evento.linkWeb.orEmpty()) }) {
                         Text("🌐 Web")
                     }
                 }
