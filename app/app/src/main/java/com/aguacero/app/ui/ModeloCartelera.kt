@@ -1,7 +1,7 @@
 package com.aguacero.app.ui
 
 import android.app.Application
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.aguacero.app.data.AlmacenPreferencias
 import com.aguacero.app.data.RepositorioDatos
@@ -35,7 +35,7 @@ data class EstadoUI(
 )
 
 /** ViewModel de la cartelera: carga, caché, filtros, búsqueda y favoritos. */
-class ModeloCartelera(private val app: Application) : ViewModel() {
+class ModeloCartelera(app: Application) : AndroidViewModel(app) {
 
     private val repositorio = RepositorioDatos(app)
     val preferencias = AlmacenPreferencias(app)
