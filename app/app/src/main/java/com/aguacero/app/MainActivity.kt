@@ -86,6 +86,7 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
     }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             Box(
                 modifier = Modifier
@@ -93,9 +94,9 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
                     .background(
                         androidx.compose.ui.graphics.Brush.horizontalGradient(
                             colors = listOf(
-                                Color(0xFF2E7CD6),
-                                Color(0xFF1B5FB0),
-                                Color(0xFF0F3D75)
+                                Color(0xFF1786B4),
+                                Color(0xFF0F5E83),
+                                Color(0xFF0A3C55)
                             )
                         )
                     )
