@@ -49,5 +49,5 @@ export function leerRepo(): { owner: string; repo: string; rama: string } {
   } catch {
     /* ignorar */
   }
-  return { owner: 'dah3l', repo: 'aguacero', rama: 'main' };
+  return { owner: 'dah3l', repo: 'AguaceroAPK', rama: 'main' };
 }
