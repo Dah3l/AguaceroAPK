@@ -201,15 +201,28 @@ fun TarjetaEvento(
             }
 
             if (evento.precio.isNotBlank()) {
-                Text(
-                    text = "💰 ${evento.precio}",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 2.dp)
-                )
+                val esGratis = evento.precio.lowercase().contains("gratis") ||
+                    evento.precio.lowercase().contains("libre") ||
+                    evento.precio.trim() == "0"
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 14.dp, vertical = 4.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(
+                            if (esGratis) Color(0xFFE8F5E9)
+                            else Color(0xFFFFF3E0)
+                        )
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = "💰 ${evento.precio}",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Bold,
+                        color = if (esGratis) Color(0xFF2E7D32) else Color(0xFFE65100),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
 
             Spacer(Modifier.height(10.dp))
