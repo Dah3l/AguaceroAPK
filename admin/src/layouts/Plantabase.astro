@@ -11,9 +11,10 @@ interface Props {
   titulo: string;
   conMenu?: boolean;
   seccion?: 'eventos' | 'categorias' | 'usuarios' | '';
+  requiereAuth?: boolean;
 }
 
-const { titulo, conMenu = true, seccion = '' } = Astro.props;
+const { titulo, conMenu = true, seccion = '', requiereAuth = true } = Astro.props;
 const sesion = leerSesion();
 ---
 <!doctype html>
@@ -45,9 +46,9 @@ const sesion = leerSesion();
       )
     }
     <AvisoGlobal />
-    <script>
+    <script define:vars={{ requiereAuth }}>
       // Protección client-side de las páginas internas.
-      if (!localStorage.getItem('aguacero_sesion')) {
+      if (requiereAuth && !localStorage.getItem('aguacero_sesion')) {
         const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         window.location.replace(`${base}/login`);
       }
