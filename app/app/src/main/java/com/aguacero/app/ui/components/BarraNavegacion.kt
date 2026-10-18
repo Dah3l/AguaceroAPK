@@ -56,9 +56,9 @@ fun BarraNavegacion(
                 .background(
                     Brush.horizontalGradient(
                         colors = listOf(
-                            Color(0xFF2E7CD6),
-                            Color(0xFF1B5FB0),
-                            Color(0xFF0F3D75)
+                            Color(0xFF1786B4),
+                            Color(0xFF0F5E83),
+                            Color(0xFF0A3C55)
                         )
                     )
                 )
@@ -82,7 +82,7 @@ fun BarraNavegacion(
                     Icon(
                         imageVector = icono,
                         contentDescription = descripcion,
-                        tint = if (activo) Color(0xFF1B5FB0) else Color.White.copy(alpha = 0.85f),
+                        tint = if (activo) Color(0xFF0F5E83) else Color.White.copy(alpha = 0.85f),
                         modifier = Modifier.size(26.dp)
                     )
                 }
