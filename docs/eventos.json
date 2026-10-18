@@ -7,12 +7,6 @@
       "color": "#607D8B"
     },
     {
-      "id": "arte",
-      "nombre": "Artes Visuales",
-      "emoji": "🎨",
-      "color": "#607D8B"
-    },
-    {
       "id": "cine",
       "nombre": "Cine",
       "emoji": "🎬",
@@ -64,7 +58,7 @@
         "+53 56803949"
       ],
       "linkWeb": null,
-      "imagen": "https://www.google.com/imgres?q=Elden%20Ring&imgurl=https%3A%2F%2Fp325k7wa.twic.pics%2Fhigh%2Felden-ring%2Felden-ring%2F08-shadow-of-the-erdtree%2Felden-ring-expansion-SOTE%2F00-page-content%2FER_SOTEEdition_EditionKeyArtnew.jpg%3Ftwic%3Dv1%2Fresize%3D760%2Fstep%3D10%2Fquality%3D80&imgrefurl=https%3A%2F%2Fes.bandainamcoent.eu%2Felden-ring%2Felden-ring&docid=R4j7YhhVyNttZM&tbnid=VnMyrduL09VtgM&vet=12ahUKEwio_tq7k8SXAxVJkO4BHf0TAdIQnPAOegUI2AIQAA..i&w=760&h=428&hcb=2&ved=2ahUKEwio_tq7k8SXAxVJkO4BHf0TAdIQnPAOegUI2AIQAA",
+      "imagen": "",
       "categoriaId": "artes-visuales",
       "organizador": "ICAIC",
       "destacado": false,
@@ -89,6 +83,26 @@
       "organizador": "ICAIC",
       "destacado": true,
       "fechaPublicacion": "2026-10-18T16:53:25.079407+00:00"
+    },
+    {
+      "id": "mve5ssveuefbr5",
+      "titulo": "UwU",
+      "descripcion": "Prueba awaaaa ",
+      "fecha": "2026-10-18",
+      "hora": "16:25",
+      "horaApertura": "17:25",
+      "lugar": "Sala Charlie Chaplin",
+      "direccion": "Alamar Zona 7",
+      "precio": "10",
+      "contacto": [
+        "+53 56803949"
+      ],
+      "linkWeb": null,
+      "imagen": "",
+      "categoriaId": "cine",
+      "organizador": "Prueba ",
+      "destacado": true,
+      "fechaPublicacion": "2026-10-18T18:28:52.601822+00:00"
     },
     {
       "id": "a1b2c3d4-0005-4000-8000-000000000005",
@@ -143,7 +157,7 @@
       ],
       "linkWeb": null,
       "imagen": "",
-      "categoriaId": "arte",
+      "categoriaId": null,
       "organizador": "",
       "destacado": false,
       "fechaPublicacion": "2026-10-15T14:00:00+00:00"
