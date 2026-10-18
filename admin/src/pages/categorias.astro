@@ -1,0 +1,107 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base titulo="Categorías">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Categorías</h1>
+    <button id="btn-nueva"
+      class="rounded-xl bg-aguacero hover:bg-aguacero-oscuro text-white font-semibold px-4 py-2.5 text-sm transition-colors">
+      ＋ Nueva categoría
+    </button>
+  </div>
+
+  <div id="lista" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+
+  <!-- Modal -->
+  <div id="modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm space-y-4">
+      <h2 id="modal-titulo" class="text-lg font-bold">Nueva categoría</h2>
+      <input id="f-id" placeholder="ID (ej: musica)" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
+      <input id="f-nombre" placeholder="Nombre" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
+      <div class="flex gap-3">
+        <input id="f-emoji" placeholder="🎶" maxlength="4" class="w-20 rounded-xl border border-slate-300 px-4 py-2.5 text-sm text-center" />
+        <input id="f-color" type="color" value="#2E7CD6" class="w-14 h-11 rounded-xl border border-slate-300 cursor-pointer" />
+      </div>
+      <div class="flex gap-3">
+        <button id="btn-guardar-cat" class="flex-1 rounded-xl bg-aguacero text-white font-semibold py-2.5 text-sm">Guardar</button>
+        <button id="btn-cancelar" class="rounded-xl border border-slate-300 px-4 py-2.5 text-sm">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase, type Categoria } from '../lib/supabase';
+
+    let editando: string | null = null;
+
+    async function cargar() {
+      const { data } = await supabase.from('categorias').select('*').order('nombre');
+      const lista = document.getElementById('lista')!;
+      lista.innerHTML = (data ?? []).map((c: Categoria) => `
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-3">
+          <span class="w-11 h-11 rounded-xl flex items-center justify-center text-2xl shrink-0" style="background:${c.color}20">${c.emoji}</span>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold truncate">${c.nombre}</p>
+            <p class="text-xs text-slate-400 font-mono">${c.id}</p>
+          </div>
+          <button data-edit="${c.id}" class="w-9 h-9 rounded-xl hover:bg-slate-100">✏️</button>
+          <button data-del="${c.id}" class="w-9 h-9 rounded-xl hover:bg-red-50">🗑️</button>
+        </div>`).join('');
+
+      lista.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', () => abrirModal((b as HTMLElement).dataset.edit!)));
+      lista.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', async () => {
+        if (!confirm('¿Eliminar esta categoría?')) return;
+        await supabase.from('categorias').delete().eq('id', (b as HTMLElement).dataset.del!);
+        (window as any).toast('Categoría eliminada');
+        cargar();
+      }));
+    }
+
+    async function abrirModal(id?: string) {
+      editando = id ?? null;
+      (document.getElementById('modal-titulo') as HTMLElement).textContent = id ? 'Editar categoría' : 'Nueva categoría';
+      const idInput = document.getElementById('f-id') as HTMLInputElement;
+      if (id) {
+        const { data } = await supabase.from('categorias').select('*').eq('id', id).single();
+        if (data) {
+          idInput.value = data.id; idInput.disabled = true;
+          (document.getElementById('f-nombre') as HTMLInputElement).value = data.nombre;
+          (document.getElementById('f-emoji') as HTMLInputElement).value = data.emoji;
+          (document.getElementById('f-color') as HTMLInputElement).value = data.color;
+        }
+      } else {
+        idInput.value = ''; idInput.disabled = false;
+        (document.getElementById('f-nombre') as HTMLInputElement).value = '';
+        (document.getElementById('f-emoji') as HTMLInputElement).value = '';
+        (document.getElementById('f-color') as HTMLInputElement).value = '#2E7CD6';
+      }
+      document.getElementById('modal')!.classList.remove('hidden');
+    }
+
+    document.getElementById('btn-nueva')?.addEventListener('click', () => abrirModal());
+    document.getElementById('btn-cancelar')?.addEventListener('click', () =>
+      document.getElementById('modal')!.classList.add('hidden'));
+
+    document.getElementById('btn-guardar-cat')?.addEventListener('click', async () => {
+      const id = (document.getElementById('f-id') as HTMLInputElement).value.trim().toLowerCase().replace(/\s+/g, '-');
+      const nombre = (document.getElementById('f-nombre') as HTMLInputElement).value.trim();
+      const emoji = (document.getElementById('f-emoji') as HTMLInputElement).value.trim() || '📅';
+      const color = (document.getElementById('f-color') as HTMLInputElement).value;
+      if (!id || !nombre) { (window as any).toast('Completa ID y nombre', 'error'); return; }
+
+      const datos = { id, nombre, emoji, color };
+      const { error } = editando
+        ? await supabase.from('categorias').update({ nombre, emoji, color }).eq('id', editando)
+        : await supabase.from('categorias').insert(datos);
+
+      if (error) (window as any).toast('Error: ' + error.message, 'error');
+      else {
+        (window as any).toast('Categoría guardada ✓');
+        document.getElementById('modal')!.classList.add('hidden');
+        cargar();
+      }
+    });
+
+    cargar();
+  </script>
+</Base>
