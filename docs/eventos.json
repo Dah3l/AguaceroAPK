@@ -1,6 +1,42 @@
 {
   "categorias": [
     {
+      "id": "artes-visuales",
+      "nombre": "Artes visuales",
+      "emoji": "🎨",
+      "color": "#607D8B"
+    },
+    {
+      "id": "arte",
+      "nombre": "Artes Visuales",
+      "emoji": "🎨",
+      "color": "#607D8B"
+    },
+    {
+      "id": "cine",
+      "nombre": "Cine",
+      "emoji": "🎬",
+      "color": "#FF5722"
+    },
+    {
+      "id": "danza",
+      "nombre": "Danza",
+      "emoji": "💃",
+      "color": "#E91E63"
+    },
+    {
+      "id": "festividad",
+      "nombre": "Festividades",
+      "emoji": "🎉",
+      "color": "#FF9800"
+    },
+    {
+      "id": "literatura",
+      "nombre": "Literatura",
+      "emoji": "📚",
+      "color": "#795548"
+    },
+    {
       "id": "musica",
       "nombre": "Música",
       "emoji": "🎶",
@@ -11,30 +47,6 @@
       "nombre": "Teatro",
       "emoji": "🎭",
       "color": "#9C27B0"
-    },
-    {
-      "id": "danza",
-      "nombre": "Danza",
-      "emoji": "💃",
-      "color": "#E91E63"
-    },
-    {
-      "id": "arte",
-      "nombre": "Artes Visuales",
-      "emoji": "🎨",
-      "color": "#FF9800"
-    },
-    {
-      "id": "cine",
-      "nombre": "Cine",
-      "emoji": "🎬",
-      "color": "#607D8B"
-    },
-    {
-      "id": "festividad",
-      "nombre": "Festividades",
-      "emoji": "🎉",
-      "color": "#4CAF50"
     }
   ],
   "eventos": [
@@ -49,12 +61,12 @@
       "direccion": "Prado y Malecón, Habana Vieja",
       "precio": "Gratis",
       "contacto": [],
-      "linkWeb": "",
+      "linkWeb": null,
       "imagen": "",
       "categoriaId": "danza",
       "organizador": "Oficina del Historiador",
       "destacado": true,
-      "fechaPublicacion": "2026-10-13T08:00:00"
+      "fechaPublicacion": "2026-10-13T08:00:00+00:00"
     },
     {
       "id": "a1b2c3d4-0002-4000-8000-000000000002",
@@ -69,12 +81,12 @@
       "contacto": [
         "+53 72044444"
       ],
-      "linkWeb": "",
+      "linkWeb": null,
       "imagen": "",
       "categoriaId": "teatro",
       "organizador": "Teatro Villanueva",
       "destacado": false,
-      "fechaPublicacion": "2026-10-16T09:30:00"
+      "fechaPublicacion": "2026-10-16T09:30:00+00:00"
     },
     {
       "id": "a1b2c3d4-0003-4000-8000-000000000003",
@@ -82,19 +94,19 @@
       "descripcion": "Inauguración de la exposición colectiva de pintura contemporánea en el Centro Wilfredo Lam. Obras de diez artistas jóvenes cubanos. Entrada libre.",
       "fecha": "2026-11-05",
       "hora": "18:00",
-      "horaApertura": "",
+      "horaApertura": null,
       "lugar": "Centro de Arte Contemporáneo Wifredo Lam",
       "direccion": "Calle Obispo No. 160, Habana Vieja",
       "precio": "Entrada libre",
       "contacto": [
         "+53 78611886"
       ],
-      "linkWeb": "",
+      "linkWeb": null,
       "imagen": "",
       "categoriaId": "arte",
       "organizador": "",
       "destacado": false,
-      "fechaPublicacion": "2026-10-15T14:00:00"
+      "fechaPublicacion": "2026-10-15T14:00:00+00:00"
     },
     {
       "id": "a1b2c3d4-0001-4000-8000-000000000001",
@@ -114,7 +126,7 @@
       "categoriaId": "musica",
       "organizador": "Must Have y Tempo",
       "destacado": true,
-      "fechaPublicacion": "2026-10-17T10:00:00"
+      "fechaPublicacion": "2026-10-17T10:00:00+00:00"
     },
     {
       "id": "a1b2c3d4-0006-4000-8000-000000000006",
@@ -129,12 +141,12 @@
       "contacto": [
         "+53 78605033"
       ],
-      "linkWeb": "",
+      "linkWeb": null,
       "imagen": "",
       "categoriaId": "festividad",
       "organizador": "Gobierno de La Habana",
       "destacado": false,
-      "fechaPublicacion": "2026-10-12T16:45:00"
+      "fechaPublicacion": "2026-10-12T16:45:00+00:00"
     },
     {
       "id": "a1b2c3d4-0004-4000-8000-000000000004",
@@ -149,12 +161,12 @@
       "contacto": [
         "+53 78321831"
       ],
-      "linkWeb": "",
+      "linkWeb": null,
       "imagen": "",
       "categoriaId": "cine",
       "organizador": "ICAIC",
       "destacado": false,
-      "fechaPublicacion": "2026-10-14T11:20:00"
+      "fechaPublicacion": "2026-10-14T11:20:00+00:00"
     }
   ]
 }
