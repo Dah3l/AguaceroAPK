@@ -24,16 +24,27 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aguacero.app.data.AlmacenPreferencias
+import com.aguacero.app.util.CrashReporter
 import com.aguacero.app.util.cancelarRevisionEventos
 import com.aguacero.app.util.programarRevisionEventos
 import kotlinx.coroutines.launch
@@ -120,6 +131,60 @@ fun PantallaAjustes(preferencias: AlmacenPreferencias) {
                 "Versión 1.0.0",
             style = MaterialTheme.typography.bodyMedium
         )
+        Divider()
+
+        // ---- Registro de errores ----
+        Text("Registro de errores", style = MaterialTheme.typography.titleMedium)
+        var mostrarDialogo by remember { mutableStateOf(false) }
+        var textoCrash by remember { mutableStateOf<String?>(null) }
+        val hayReporte = remember { CrashReporter.hayReporte(contexto) }
+
+        Text(
+            "Si la app se cierra sola, aquí puedes ver y copiar el registro del error para reportarlo.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        TextButton(
+            onClick = {
+                textoCrash = CrashReporter.leer(contexto)
+                mostrarDialogo = true
+            },
+            enabled = hayReporte || textoCrash != null
+        ) {
+            Text(if (hayReporte) "📋 Ver último error" else "Sin errores registrados")
+        }
+
+        if (mostrarDialogo) {
+            AlertDialog(
+                onDismissRequest = { mostrarDialogo = false },
+                title = { Text("Registro de error") },
+                text = {
+                    Text(
+                        textoCrash ?: "No hay registro.",
+                        modifier = Modifier
+                            .horizontalScroll(rememberScrollState())
+                            .verticalScroll(rememberScrollState()),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        val cm = contexto.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        cm.setPrimaryClip(ClipData.newPlainText("crash", textoCrash ?: ""))
+                        Toast.makeText(contexto, "Copiado ✓", Toast.LENGTH_SHORT).show()
+                    }) { Text("Copiar") }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        CrashReporter.limpiar(contexto)
+                        textoCrash = null
+                        mostrarDialogo = false
+                    }) { Text("Borrar") }
+                }
+            )
+        }
+
         Spacer(Modifier.height(24.dp))
     }
 }
