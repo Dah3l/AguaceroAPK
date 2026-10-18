@@ -41,6 +41,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import com.aguacero.app.ui.components.ListaSkeletons
+import com.aguacero.app.ui.components.ChipModerno
 import com.aguacero.app.ui.components.TarjetaDestacado
 import com.aguacero.app.ui.components.TarjetaEvento
 
@@ -67,45 +68,45 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
         // ---- Filtros sticky (no se mueven con el scroll) ----
         // ---- Chips de filtro por rango de fecha ----
         val rangos = listOf(
+            RangoFecha.TODOS to "Todos",
             RangoFecha.HOY to "Hoy",
             RangoFecha.MANANA to "Mañana",
-            RangoFecha.ESTE_FINDE to "Este finde",
-            RangoFecha.TODOS to "Todos"
+            RangoFecha.ESTE_FINDE to "Este finde"
         )
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(rangos) { (rango, nombre) ->
-                FilterChip(
-                    selected = estado.rangoFecha == rango,
-                    onClick = { modelo.filtrarRango(rango) },
-                    label = { Text(nombre) }
+                ChipModerno(
+                    texto = nombre,
+                    seleccionado = estado.rangoFecha == rango,
+                    alClic = { modelo.filtrarRango(rango) }
                 )
             }
         }
 
         // ---- Chips de filtro por categoría ----
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                FilterChip(
-                    selected = estado.categoriaActiva == null,
-                    onClick = { modelo.filtrarCategoria(null) },
-                    label = { Text("Todas") }
+                ChipModerno(
+                    texto = "Todas",
+                    seleccionado = estado.categoriaActiva == null,
+                    alClic = { modelo.filtrarCategoria(null) }
                 )
             }
             items(estado.categorias) { categoria ->
-                FilterChip(
-                    selected = estado.categoriaActiva == categoria.id,
-                    onClick = {
+                ChipModerno(
+                    texto = "${categoria.emoji} ${categoria.nombre}",
+                    seleccionado = estado.categoriaActiva == categoria.id,
+                    alClic = {
                         modelo.filtrarCategoria(
                             if (estado.categoriaActiva == categoria.id) null else categoria.id
                         )
-                    },
-                    label = { Text("${categoria.emoji} ${categoria.nombre}") }
+                    }
                 )
             }
         }
