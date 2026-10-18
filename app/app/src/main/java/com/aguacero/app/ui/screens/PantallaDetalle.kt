@@ -18,7 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.automirrored.filled.Call
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -200,7 +200,7 @@ fun PantallaDetalle(
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Call,
+                            imageVector = Icons.Filled.Call,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp)
