@@ -78,10 +78,62 @@ const e = evento ?? ({} as Partial<Evento>);
         class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero" />
     </div>
     <div class="md:col-span-2">
-      <label class="block text-sm font-medium text-slate-700 mb-1">Imagen (URL del flyer)</label>
-      <input name="imagen" type="url" value={e.imagen ?? ''} placeholder="https://…"
-        class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero" />
+      <label class="block text-sm font-medium text-slate-700 mb-1">Imagen del flyer</label>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <label class="flex-1 cursor-pointer">
+          <input id="input-archivo" type="file" accept="image/*" class="hidden" />
+          <span class="flex items-center justify-center gap-2 w-full rounded-xl border-2 border-dashed border-slate-300 hover:border-aguacero px-4 py-3 text-sm text-slate-600 hover:text-aguacero transition-colors">
+            📤 <span id="nombre-archivo">Subir imagen…</span>
+          </span>
+        </label>
+        <input name="imagen" id="input-url" type="url" value={e.imagen ?? ''} placeholder="…o pega una URL https://"
+          class="flex-1 rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero" />
+      </div>
+      <div id="preview-img" class="mt-2" style={e.imagen ? '' : 'display:none'}>
+        <img src={e.imagen ?? ''} class="h-24 rounded-xl object-cover border border-slate-200" alt="Vista previa" />
+      </div>
+      <p id="estado-subida" class="text-xs text-slate-500 mt-1"></p>
     </div>
+    <script>
+      import { supabase } from '../lib/supabase';
+      const inputArchivo = document.getElementById('input-archivo') as HTMLInputElement;
+      const inputUrl = document.getElementById('input-url') as HTMLInputElement;
+      const nombreArchivo = document.getElementById('nombre-archivo') as HTMLElement;
+      const preview = document.getElementById('preview-img') as HTMLElement;
+      const estado = document.getElementById('estado-subida') as HTMLElement;
+
+      inputUrl?.addEventListener('input', () => {
+        const img = preview.querySelector('img') as HTMLImageElement;
+        if (inputUrl.value) { img.src = inputUrl.value; preview.style.display = ''; }
+        else preview.style.display = 'none';
+      });
+
+      inputArchivo?.addEventListener('change', async () => {
+        const archivo = inputArchivo.files?.[0];
+        if (!archivo) return;
+        nombreArchivo.textContent = archivo.name;
+        estado.textContent = '⏳ Subiendo…';
+        estado.className = 'text-xs text-amber-600 mt-1';
+        try {
+          const ext = archivo.name.split('.').pop() || 'jpg';
+          const nombre = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+          const { error } = await supabase.storage.from('flyers').upload(nombre, archivo, {
+            contentType: archivo.type,
+          });
+          if (error) throw error;
+          const { data } = supabase.storage.from('flyers').getPublicUrl(nombre);
+          inputUrl.value = data.publicUrl;
+          const img = preview.querySelector('img') as HTMLImageElement;
+          img.src = data.publicUrl;
+          preview.style.display = '';
+          estado.textContent = '✓ Imagen subida';
+          estado.className = 'text-xs text-emerald-600 mt-1';
+        } catch (err: any) {
+          estado.textContent = '✗ Error: ' + (err.message ?? err);
+          estado.className = 'text-xs text-red-600 mt-1';
+        }
+      });
+    </script>
     <div class="md:col-span-2">
       <label class="flex items-center gap-2 cursor-pointer select-none">
         <input name="destacado" type="checkbox" checked={e.destacado ?? false} class="w-4 h-4 accent-aguacero" />
