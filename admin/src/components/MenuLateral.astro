@@ -8,15 +8,17 @@ interface Props {
 }
 const { seccion, nombreSesion, usuarioSesion, esAdmin } = Astro.props;
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 const enlaces = [
-  { id: 'eventos', texto: 'Eventos', icono: '📅', ruta: '/' },
-  { id: 'categorias', texto: 'Categorías', icono: '🏷️', ruta: '/categorias' },
-  ...(esAdmin ? [{ id: 'usuarios', texto: 'Usuarios', icono: '👤', ruta: '/usuarios' }] : []),
+  { id: 'eventos', texto: 'Eventos', icono: '📅', ruta: `${base}/` },
+  { id: 'categorias', texto: 'Categorías', icono: '🏷️', ruta: `${base}/categorias` },
+  ...(esAdmin ? [{ id: 'usuarios', texto: 'Usuarios', icono: '👤', ruta: `${base}/usuarios` }] : []),
 ];
 ---
 <header class="bg-aguacero text-white lg:bg-white lg:text-slate-800 lg:w-64 lg:shrink-0 lg:min-h-screen lg:border-r lg:border-slate-200">
   <div class="px-4 py-3 lg:px-6 lg:py-8">
-    <a href="./" class="flex items-center gap-2 font-bold text-lg select-none">
+    <a href={`${base}/`} class="flex items-center gap-2 font-bold text-lg select-none">
       <span>🌧️</span><span>Aguacero <span class="font-normal opacity-70">admin</span></span>
     </a>
 
@@ -35,7 +37,7 @@ const enlaces = [
           enlaces.map((enlace) => (
             <li>
               <a
-                href={`.${enlace.ruta}`}
+                href={enlace.ruta}
                 aria-current={seccion === enlace.id ? 'page' : undefined}
                 class:list={[
                   'block rounded-lg px-3 py-2 text-sm font-medium transition-colors',
