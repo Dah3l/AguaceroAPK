@@ -35,19 +35,57 @@ import androidx.compose.ui.unit.dp
 import com.aguacero.app.ui.ModeloCartelera
 import com.aguacero.app.ui.RangoFecha
 import com.aguacero.app.ui.components.EstadoVacio
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import com.aguacero.app.ui.components.TarjetaDestacado
 import com.aguacero.app.ui.components.TarjetaEvento
 
 /**
  * Pantalla de Inicio: lista de eventos futuros ordenados por cercanía,
  * con filtros por categoría y rango de fecha, y tirada para actualizar.
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
     val estado by modelo.estado.collectAsState()
     val favoritos by modelo.favoritos.collectAsState()
 
+    val pullState = rememberPullRefreshState(
+        refreshing = estado.cargando,
+        onRefresh = { modelo.cargar(true) }
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(pullState)
+    ) {
     Column(modifier = Modifier.fillMaxSize()) {
+        // ---- Carrusel de Destacados ----
+        val destacados = modelo.eventosFiltrados().filter { it.destacado }.take(5)
+        if (destacados.isNotEmpty() && !estado.cargando) {
+            Text(
+                "⭐ Destacados",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 14.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(bottom = 8.dp)
+            ) {
+                items(destacados, key = { it.id }) { evento ->
+                    TarjetaDestacado(
+                        evento = evento,
+                        categoria = modelo.categoriaDe(evento),
+                        alClic = { alAbrirDetalle(evento.id) }
+                    )
+                }
+            }
+        }
+
         // ---- Chips de filtro por rango de fecha ----
         val rangos = listOf(
             RangoFecha.HOY to "Hoy",
@@ -94,42 +132,21 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
         }
 
         if (estado.desdeCache && !estado.cargando) {
-            Card(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 4.dp)
-                    .clickable { modelo.cargar(true) },
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
-                )
+                    .background(MaterialTheme.colorScheme.errorContainer)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text("📴", style = MaterialTheme.typography.titleMedium)
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            "Sin conexión",
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onErrorContainer
-                        )
-                        Text(
-                            "Mostrando datos guardados · Toca para reintentar",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onErrorContainer
-                        )
-                    }
-                    Icon(
-                        Icons.Filled.Refresh,
-                        contentDescription = "Reintentar",
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
+                Text("📴", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    "Sin conexión · mostrando datos guardados",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    fontWeight = FontWeight.Medium
+                )
             }
         }
 
@@ -186,5 +203,11 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                 }
             }
         }
+    }
+        PullRefreshIndicator(
+            refreshing = estado.cargando,
+            state = pullState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
 }
