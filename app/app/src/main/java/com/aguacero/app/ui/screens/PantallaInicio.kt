@@ -182,8 +182,11 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                         }
                         item(key = "destacados_carousel") {
                             LazyRow(
+                                contentPadding = PaddingValues(horizontal = 16.dp),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                modifier = Modifier.padding(bottom = 4.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 4.dp)
                             ) {
                                 items(destacados, key = { it.id }) { evento ->
                                     TarjetaDestacado(
