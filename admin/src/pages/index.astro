@@ -1,6 +1,7 @@
 ---
 // Página principal: lista de eventos con filtros, búsqueda y acciones.
 import Plantabase from '../layouts/Plantabase.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <Plantabase titulo="Eventos" seccion="eventos">
   <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
@@ -8,7 +9,7 @@ import Plantabase from '../layouts/Plantabase.astro';
       <h1 class="text-2xl font-bold text-aguacero-oscuro">📅 Eventos</h1>
       <p class="text-sm text-slate-500" id="contador-eventos">Cargando…</p>
     </div>
-    <a href="./nuevo"
+    <a href={`${base}/nuevo`}
       class="rounded-lg bg-aguacero hover:bg-aguacero-oscuro text-white font-semibold px-4 py-2.5 text-sm transition-colors shadow">
       ＋ Nuevo evento
     </a>
