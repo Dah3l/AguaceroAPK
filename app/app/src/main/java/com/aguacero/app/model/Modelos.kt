@@ -30,14 +30,14 @@ data class Evento(
     val descripcion: String = "",
     val fecha: String,                    // "2026-10-18"
     val hora: String,                     // "19:00"
-    @SerialName("horaApertura") val horaApertura: String = "",   // opcional
+    @SerialName("horaApertura") val horaApertura: String? = null,   // opcional
     val lugar: String = "",
     val direccion: String = "",
     val precio: String = "",              // texto libre: "1000 CUP incluye trago"
     val contacto: List<String> = emptyList(),
-    @SerialName("linkWeb") val linkWeb: String = "",             // opcional
+    @SerialName("linkWeb") val linkWeb: String? = null,             // opcional
     val imagen: String = "",              // URL del flyer
-    @SerialName("categoriaId") val categoriaId: String = "",
+    @SerialName("categoriaId") val categoriaId: String? = null,
     val organizador: String = "",         // opcional
     val destacado: Boolean = false,
     @SerialName("fechaPublicacion") val fechaPublicacion: String = ""
