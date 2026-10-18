@@ -34,6 +34,6 @@ fun TemaAguacero(
     MaterialTheme(
         colorScheme = if (esModoOscuro) EsquemaOscuro else EsquemaClaro,
         typography = androidx.compose.material3.Typography(),
-        contenido = contenido
+        content = contenido
     )
 }
