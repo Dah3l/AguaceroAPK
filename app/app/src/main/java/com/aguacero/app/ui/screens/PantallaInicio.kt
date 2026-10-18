@@ -39,6 +39,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import com.aguacero.app.ui.components.ListaSkeletons
 import com.aguacero.app.ui.components.TarjetaDestacado
 import com.aguacero.app.ui.components.TarjetaEvento
 
@@ -154,10 +155,7 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
         val eventos = modelo.eventosFiltrados()
 
         when {
-            estado.cargando && eventos.isEmpty() -> Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator() }
+            estado.cargando && eventos.isEmpty() -> ListaSkeletons()
 
             estado.error != null && eventos.isEmpty() -> Column(
                 modifier = Modifier.fillMaxSize(),
