@@ -230,9 +230,13 @@ fun TarjetaEvento(
     }
 }
 
-/** Estado vacío sencillo con icono y mensaje. */
+/** Estado vacío pulido con icono en círculo y mensaje. */
 @Composable
-fun EstadoVacio(icono: androidx.compose.ui.graphics.vector.ImageVector, mensaje: String) {
+fun EstadoVacio(
+    icono: androidx.compose.ui.graphics.vector.ImageVector,
+    mensaje: String,
+    subtitulo: String = ""
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -240,18 +244,36 @@ fun EstadoVacio(icono: androidx.compose.ui.graphics.vector.ImageVector, mensaje:
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
     ) {
-        Icon(
-            imageVector = icono,
-            contentDescription = null,
-            modifier = Modifier.size(64.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(Modifier.height(12.dp))
+        Box(
+            modifier = Modifier
+                .size(96.dp)
+                .clip(androidx.compose.foundation.shape.CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icono,
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+        Spacer(Modifier.height(16.dp))
         Text(
             mensaje,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface
         )
+        if (subtitulo.isNotBlank()) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                subtitulo,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+        }
     }
 }
 
