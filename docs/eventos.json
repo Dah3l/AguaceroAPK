@@ -91,26 +91,6 @@
       "fechaPublicacion": "2026-10-18T18:28:52.601822+00:00"
     },
     {
-      "id": "mve3n7ha7mbqyo",
-      "titulo": "Evento Elden Ring",
-      "descripcion": "Evento Elden Ring ",
-      "fecha": "2026-10-18",
-      "hora": "17:28",
-      "horaApertura": "17:28",
-      "lugar": "Sala Charlie Chaplin",
-      "direccion": "Calle 23 e/ L y M, Vedado",
-      "precio": "100 CUP general",
-      "contacto": [
-        "+53 56803949"
-      ],
-      "linkWeb": null,
-      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792351615557-f7mn5d.jpg",
-      "categoriaId": "videojuegos",
-      "organizador": "ICAIC",
-      "destacado": true,
-      "fechaPublicacion": "2026-10-18T17:28:31.318136+00:00"
-    },
-    {
       "id": "mve7714uytsbwx",
       "titulo": "Exposición de Fotografía Dahel Alvarado Reyes",
       "descripcion": "Exposición Fotográfica",
@@ -167,6 +147,26 @@
       "organizador": "Teatro Villanueva",
       "destacado": false,
       "fechaPublicacion": "2026-10-16T09:30:00+00:00"
+    },
+    {
+      "id": "mve3n7ha7mbqyo",
+      "titulo": "Evento Elden Ring",
+      "descripcion": "Evento Elden Ring ",
+      "fecha": "2026-10-30",
+      "hora": "17:28",
+      "horaApertura": "17:28",
+      "lugar": "Sala Charlie Chaplin",
+      "direccion": "Calle 23 e/ L y M, Vedado",
+      "precio": "100 CUP general",
+      "contacto": [
+        "+53 56803949"
+      ],
+      "linkWeb": null,
+      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792351615557-f7mn5d.jpg",
+      "categoriaId": "videojuegos",
+      "organizador": "ICAIC",
+      "destacado": true,
+      "fechaPublicacion": "2026-10-18T17:28:31.318136+00:00"
     },
     {
       "id": "a1b2c3d4-0003-4000-8000-000000000003",
