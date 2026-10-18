@@ -1,5 +1,7 @@
 name: Sync Supabase → eventos.json
 
+permissions:
+  contents: write
 on:
   schedule:
     - cron: '*/10 * * * *'
