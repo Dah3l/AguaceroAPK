@@ -103,10 +103,14 @@ const { data: categorias } = await supabase.from('categorias').select('*').order
               <input name="imagen" type="url" value="${e.imagen ?? ''}"
                 class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero" />
             </div>
-            <div class="md:col-span-2">
+            <div class="md:col-span-2 flex flex-wrap gap-6">
               <label class="flex items-center gap-2 cursor-pointer">
                 <input name="destacado" type="checkbox" ${e.destacado ? 'checked' : ''} class="w-4 h-4 accent-aguacero" />
                 <span class="text-sm font-medium text-slate-700">⭐ Evento destacado</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input name="publicado" type="checkbox" ${e.publicado ? 'checked' : ''} class="w-4 h-4 accent-emerald-500" />
+                <span class="text-sm font-medium text-slate-700">🚀 Publicado <span class="text-xs text-slate-400">(visible en la APK)</span></span>
               </label>
             </div>
           </div>
@@ -140,6 +144,7 @@ const { data: categorias } = await supabase.from('categorias').select('*').order
             categoria_id: ((fd.get('categoria_id') as string) || null) as any,
             organizador: fd.get('organizador') || '',
             destacado: (form.querySelector('[name="destacado"]') as HTMLInputElement).checked,
+            publicado: (form.querySelector('[name="publicado"]') as HTMLInputElement).checked,
           }).eq('id', id);
 
           if (error) {
