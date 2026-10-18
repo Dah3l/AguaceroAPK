@@ -96,6 +96,24 @@ fun abrirWeb(contexto: Context, url: String) {
     try { contexto.startActivity(intent) } catch (_: Exception) { }
 }
 
+fun chatearWhatsApp(contexto: Context, numero: String, mensaje: String) {
+    val limpio = numero.filter { it.isDigit() || it == '+' }
+    if (limpio.isBlank()) return
+    // wa.me requiere el número sin + ni espacios
+    val sinMas = limpio.replace("+", "")
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse("https://wa.me/$sinMas?text=${Uri.encode(mensaje)}")
+        setPackage("com.whatsapp")
+    }
+    try {
+        contexto.startActivity(intent)
+    } catch (_: Exception) {
+        // Sin WhatsApp, intentar genérico
+        val generico = Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/$sinMas?text=${Uri.encode(mensaje)}"))
+        try { contexto.startActivity(generico) } catch (_: Exception) { }
+    }
+}
+
 fun compartirWhatsApp(contexto: Context, mensaje: String) {
     val intent = Intent(Intent.ACTION_VIEW).apply {
         data = Uri.parse("https://api.whatsapp.com/send?text=${Uri.encode(mensaje)}")
