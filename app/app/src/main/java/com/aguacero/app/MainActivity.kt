@@ -124,10 +124,14 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
             }
         },
         bottomBar = {
-            BarraNavegacion(
-                pestanaActual = pestana,
-                alCambiar = { pestana = it }
-            )
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier.background(Color.Transparent)
+            ) {
+                BarraNavegacion(
+                    pestanaActual = pestana,
+                    alCambiar = { pestana = it }
+                )
+            }
         }
     ) { valoresInternos ->
         androidx.compose.foundation.layout.Box(modifier = Modifier.padding(valoresInternos)) {
