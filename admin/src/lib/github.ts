@@ -45,7 +45,7 @@ async function subirArchivo(
   const shaActual = await shaDeArchivo(ruta);
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${ruta}`;
   const cuerpo: Record<string, unknown> = {
-    message,
+    message: mensaje,
     content: esBase64 ? contenido : btoa(unescape(encodeURIComponent(contenido))),
     branch: rama,
   };
