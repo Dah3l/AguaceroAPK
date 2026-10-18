@@ -1,0 +1,103 @@
+---
+// Pantalla de acceso al panel. Multiusuario con contraseñas SHA-256.
+import Plantabase from '../layouts/Plantabase.astro';
+---
+<Plantabase titulo="Acceso" conMenu={false}>
+  <div class="w-full max-w-md">
+    <div class="text-center mb-6">
+      <div class="text-5xl mb-2">🌧️</div>
+      <h1 class="text-2xl font-bold text-aguacero-oscuro">Aguacero · Panel</h1>
+      <p class="text-slate-500 text-sm mt-1">Cartelera cultural de La Habana</p>
+    </div>
+
+    <form id="formulario-login" class="bg-white rounded-2xl shadow p-6 space-y-4">
+      <div>
+        <label for="usuario" class="block text-sm font-medium mb-1">Usuario</label>
+        <input id="usuario" name="usuario" type="text" autocomplete="username" required
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-aguacero" />
+      </div>
+      <div>
+        <label for="clave" class="block text-sm font-medium mb-1">Contraseña</label>
+        <input id="clave" name="clave" type="password" autocomplete="current-password" required
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-aguacero" />
+      </div>
+      <p id="error-login" class="hidden text-sm text-red-600"></p>
+      <button type="submit" id="btn-entrar"
+        class="w-full rounded-lg bg-aguacero hover:bg-aguacero-oscuro text-white font-semibold py-2.5 transition-colors">
+        Entrar
+      </button>
+      <p class="text-xs text-slate-400 text-center">
+        ¿Primera vez? El usuario inicial y su clave están en <code>docs/usuarios.json</code>.
+      </p>
+    </form>
+  </div>
+</Plantabase>
+
+<script>
+  import { sha256 } from '../lib/hash';
+  import { cargarDatos, usuariosSemilla } from '../lib/datos';
+  import { guardarSesion, guardarToken, guardarRepo, leerToken, leerRepo } from '../lib/sesion';
+
+  // Si ya hay sesión, directo al panel.
+  if (localStorage.getItem('aguacero_sesion')) {
+    const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+    window.location.replace(`${base}/`);
+  }
+
+  const formulario = document.getElementById('formulario-login') as HTMLFormElement;
+  const parrafoError = document.getElementById('error-login') as HTMLParagraphElement;
+  const boton = document.getElementById('btn-entrar') as HTMLButtonElement;
+
+  formulario.addEventListener('submit', async (suceso) => {
+    suceso.preventDefault();
+    parrafoError.classList.add('hidden');
+    boton.disabled = true;
+    boton.textContent = 'Verificando…';
+
+    try {
+      const usuario = (document.getElementById('usuario') as HTMLInputElement).value.trim().toLowerCase();
+      const clave = (document.getElementById('clave') as HTMLInputElement).value;
+      const hashIntroducido = await sha256(clave);
+
+      let { usuarios } = await cargarDatos();
+      if (usuarios.length === 0) usuarios = await usuariosSemilla();
+
+      const encontrado = usuarios.find((u) => u.usuario.toLowerCase() === usuario && u.hash === hashIntroducido);
+      if (!encontrado) {
+        parrafoError.textContent = 'Usuario o contraseña incorrectos.';
+        parrafoError.classList.remove('hidden');
+        return;
+      }
+
+      guardarSesion({
+        usuario: encontrado.usuario,
+        nombre: encontrado.nombre,
+        esAdmin: Boolean(encontrado.esAdmin),
+      });
+
+      // Primera vez: pedir el token para los commits automáticos (opcional luego).
+      if (!leerToken()) {
+        const token = window.prompt(
+          'Para publicar cambios se necesita un token de GitHub (scope: repo).\n' +
+            'Pégalo aquí (se guarda solo en este navegador). Puedes cancelar y publicarlo más tarde.'
+        );
+        if (token && token.trim()) {
+          guardarToken(token.trim());
+          const owner = window.prompt('Propietario del repo', leerRepo().owner) ?? 'dah3l';
+          const repo = window.prompt('Nombre del repo', leerRepo().repo) ?? 'aguacero';
+          const rama = window.prompt('Rama destino', leerRepo().rama) ?? 'main';
+          guardarRepo(owner.trim(), repo.trim(), rama.trim());
+        }
+      }
+
+      const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+      window.location.href = `${base}/`;
+    } catch (error) {
+      parrafoError.textContent = `Error: ${(error as Error).message}`;
+      parrafoError.classList.remove('hidden');
+    } finally {
+      boton.disabled = false;
+      boton.textContent = 'Entrar';
+    }
+  });
+</script>

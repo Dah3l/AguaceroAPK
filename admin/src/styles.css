@@ -1,0 +1,12 @@
+@import 'tailwindcss';
+
+/* Paleta azul del logo Aguacero */
+@theme {
+  --color-aguacero: #2e7cd6;
+  --color-aguacero-oscuro: #1b5aa8;
+  --color-aguacero-suave: #eaf3fc;
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}

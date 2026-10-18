@@ -1,0 +1,7 @@
+# Dependencias y artefactos del panel Astro
+node_modules/
+dist/
+.astro/
+.env
+.env.production
+.DS_Store

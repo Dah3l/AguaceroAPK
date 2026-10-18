@@ -1,0 +1,128 @@
+---
+// Edición de un evento existente. Se genera como /editar/index.html y recibe el
+// id por query (?id=...), compatible con GitHub Pages sin servidor.
+import Plantabase from '../../layouts/Plantabase.astro';
+import FormularioEvento from '../../components/FormularioEvento.astro';
+import { cargarDatos } from '../../lib/datos';
+
+const { cartelera } = await cargarDatos();
+---
+<Plantabase titulo="Editar evento" seccion="eventos">
+  <h1 class="text-2xl font-bold text-aguacero-oscuro mb-1">✏️ Editar evento</h1>
+  <p class="text-sm text-slate-500 mb-5" id="info-edicion"></p>
+  <FormularioEvento categorias={cartelera.categorias} />
+</Plantabase>
+
+<script>
+  import {
+    cargarContactos,
+    leerFormulario,
+    montarGestionContactos,
+    mostrarVistaPrevia,
+    validar,
+  } from '../../lib/formulario';
+  import { cargarDatos } from '../../lib/datos';
+  import { anunciandoProgreso, publicarCartelera, subirFlyer } from '../../lib/publicar';
+  import { leerToken } from '../../lib/sesion';
+  import type { Evento } from '../../lib/tipos';
+
+  const idEvento = new URLSearchParams(window.location.search).get('id') ?? '';
+  const formulario = document.getElementById('formulario-evento') as HTMLFormElement;
+  const parrafoError = document.getElementById('error-formulario') as HTMLParagraphElement;
+  const botonGuardar = document.getElementById('btn-guardar') as HTMLButtonElement;
+
+  let eventoOriginal: Evento | null = null;
+
+  if (!idEvento) {
+    parrafoError.textContent = 'Falta el identificador del evento. Vuelve a la lista.';
+    parrafoError.classList.remove('hidden');
+    botonGuardar.disabled = true;
+  } else {
+    const { cartelera } = await cargarDatos();
+    eventoOriginal = cartelera.eventos.find((e) => e.id === idEvento) ?? null;
+    if (!eventoOriginal) {
+      parrafoError.textContent = 'No se encontró el evento solicitado. Vuelve a la lista.';
+      parrafoError.classList.remove('hidden');
+      botonGuardar.disabled = true;
+    } else {
+      document.getElementById('info-edicion')!.textContent =
+        `"${eventoOriginal.titulo}" · publicado el ${eventoOriginal.fechaPublicacion}`;
+      (document.getElementById('titulo') as HTMLInputElement).value = eventoOriginal.titulo;
+      (document.getElementById('descripcion') as HTMLTextAreaElement).value = eventoOriginal.descripcion;
+      (document.getElementById('fecha') as HTMLInputElement).value = eventoOriginal.fecha;
+      (document.getElementById('hora') as HTMLInputElement).value = eventoOriginal.hora;
+      (document.getElementById('hora-apertura') as HTMLInputElement).value = eventoOriginal.horaApertura ?? '';
+      (document.getElementById('lugar') as HTMLInputElement).value = eventoOriginal.lugar;
+      (document.getElementById('direccion') as HTMLInputElement).value = eventoOriginal.direccion;
+      (document.getElementById('precio') as HTMLInputElement).value = eventoOriginal.precio ?? '';
+      (document.getElementById('organizador') as HTMLInputElement).value = eventoOriginal.organizador ?? '';
+      (document.getElementById('link-web') as HTMLInputElement).value = eventoOriginal.linkWeb ?? '';
+      (document.getElementById('categoria') as HTMLSelectElement).value = eventoOriginal.categoriaId;
+      (document.getElementById('destacado') as HTMLInputElement).checked = Boolean(eventoOriginal.destacado);
+      mostrarVistaPrevia(eventoOriginal.imagen ?? '');
+      cargarContactos(eventoOriginal.contacto ?? []);
+    }
+  }
+
+  montarGestionContactos();
+
+  // Vista previa en vivo cuando se escribe una URL o se elige un archivo
+  document.getElementById('imagen-url')?.addEventListener('input', (suceso) => {
+    const imagen = document.getElementById('vista-imagen') as HTMLImageElement;
+    const url = (suceso.target as HTMLInputElement).value.trim();
+    if (url) {
+      imagen.src = url;
+      imagen.classList.remove('hidden');
+    } else {
+      imagen.classList.add('hidden');
+    }
+  });
+  document.getElementById('imagen-archivo')?.addEventListener('change', (suceso) => {
+    const archivo = (suceso.target as HTMLInputElement).files?.[0];
+    if (archivo) mostrarVistaPrevia(URL.createObjectURL(archivo));
+  });
+
+  formulario.addEventListener('submit', async (suceso) => {
+    suceso.preventDefault();
+    if (!eventoOriginal) return;
+    parrafoError.classList.add('hidden');
+    if (!validar(parrafoError)) return;
+    if (!leerToken()) {
+      parrafoError.textContent = 'Falta el token de GitHub para publicar.';
+      parrafoError.classList.remove('hidden');
+      return;
+    }
+
+    botonGuardar.disabled = true;
+    try {
+      const datos = leerFormulario();
+      const actualizado: Evento = {
+        ...eventoOriginal,
+        ...datos,
+        destacado: (document.getElementById('destacado') as HTMLInputElement).checked,
+      };
+
+      const archivo = (document.getElementById('imagen-archivo') as HTMLInputElement).files?.[0];
+      if (archivo) {
+        anunciandoProgreso('Subiendo flyer…');
+        actualizado.imagen = await subirFlyer(archivo, actualizado.id);
+      }
+
+      anunciandoProgreso('Publicando eventos.json…');
+      const { cartelera, usuarios } = await cargarDatos();
+      await publicarCartelera(
+        {
+          categorias: cartelera.categorias,
+          eventos: cartelera.eventos.map((e) => (e.id === actualizado.id ? actualizado : e)),
+        },
+        usuarios,
+        `Aguacero admin: actualiza evento "${actualizado.titulo}"`
+      );
+      window.location.href = '../';
+    } catch (error) {
+      parrafoError.textContent = `Error al guardar: ${(error as Error).message}`;
+      parrafoError.classList.remove('hidden');
+      botonGuardar.disabled = false;
+    }
+  });
+</script>

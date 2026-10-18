@@ -1,0 +1,192 @@
+---
+// Gestión de usuarios: solo el primer usuario (admin) puede crear/editar/borrar.
+import Plantabase from '../../layouts/Plantabase.astro';
+import { leerSesion } from '../../lib/sesion';
+
+const sesion = leerSesion();
+---
+<Plantabase titulo="Usuarios" seccion="usuarios">
+  {
+    sesion?.esAdmin ? (
+      <>
+        <h1 class="text-2xl font-bold text-aguacero-oscuro mb-1">👤 Usuarios</h1>
+        <p class="text-sm text-slate-500 mb-5">
+          Las contraseñas se guardan hasheadas (SHA-256) en <code>docs/usuarios.json</code>.
+        </p>
+
+        <!-- Formulario crear/editar -->
+        <form id="formulario-usuario" class="bg-white rounded-2xl shadow p-5 mb-6">
+          <input type="hidden" id="usuario-original" value="" />
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+            <div>
+              <label for="campo-usuario" class="block text-sm font-medium mb-1">Usuario *</label>
+              <input id="campo-usuario" type="text" required autocomplete="off" placeholder="coordinadora"
+                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero" />
+            </div>
+            <div>
+              <label for="campo-nombre" class="block text-sm font-medium mb-1">Nombre *</label>
+              <input id="campo-nombre" type="text" required placeholder="Coordinadora de cartelera"
+                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero" />
+            </div>
+            <div>
+              <label for="campo-clave" class="block text-sm font-medium mb-1">Contraseña *</label>
+              <input id="campo-clave" type="password" autocomplete="new-password"
+                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-aguacero" />
+              <p class="text-xs text-slate-400 mt-1" id="ayuda-clave">Obligatoria al crear.</p>
+            </div>
+            <button type="submit"
+              class="rounded-lg bg-aguacero hover:bg-aguacero-oscuro text-white font-semibold px-5 py-2.5 text-sm transition-colors">
+              💾 Guardar
+            </button>
+          </div>
+          <p id="error-usuario" class="hidden text-sm text-red-600 mt-3"></p>
+        </form>
+
+        <div id="lista-usuarios" class="space-y-3"></div>
+      </>
+    ) : (
+      <div class="bg-white rounded-2xl shadow p-8 text-center">
+        <p class="text-lg font-semibold">🔒 Solo el administrador puede gestionar usuarios.</p>
+        <a href="../" class="inline-block mt-4 text-aguacero hover:underline text-sm">Volver a eventos</a>
+      </div>
+    )
+  }
+</Plantabase>
+
+<script>
+  import { sha256 } from '../../lib/hash';
+  import { cargarDatos } from '../../lib/datos';
+  import { publicarUsuarios } from '../../lib/publicar';
+  import { guardarSesion, leerSesion, leerToken } from '../../lib/sesion';
+  import type { Usuario } from '../../lib/tipos';
+
+  let usuarios: Usuario[] = [];
+  const lista = document.getElementById('lista-usuarios');
+  if (!lista) throw new Error('sin lista'); // no admin: el script ni pinta
+  const formulario = document.getElementById('formulario-usuario') as HTMLFormElement;
+  const parrafoError = document.getElementById('error-usuario') as HTMLElement;
+  const campoUsuario = document.getElementById('campo-usuario') as HTMLInputElement;
+  const campoNombre = document.getElementById('campo-nombre') as HTMLInputElement;
+  const campoClave = document.getElementById('campo-clave') as HTMLInputElement;
+  const campoOriginal = document.getElementById('usuario-original') as HTMLInputElement;
+
+  function escapar(texto: string): string {
+    return texto.replace(/[&<>"']/g, (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+  }
+
+  function dibujar() {
+    lista!.innerHTML = '';
+    usuarios.forEach((usuario, indice) => {
+      const fila = document.createElement('div');
+      fila.className = 'bg-white rounded-2xl shadow p-4 flex items-center gap-3';
+      fila.innerHTML = `
+        <span class="w-10 h-10 rounded-full bg-aguacero-suave text-aguacero-oscuro flex items-center justify-center font-bold">
+          ${escapar(usuario.nombre.slice(0, 1).toUpperCase())}
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold truncate">${escapar(usuario.nombre)}</p>
+          <p class="text-xs text-slate-500">@${escapar(usuario.usuario)}${indice === 0 ? ' · administrador' : ''}</p>
+        </div>`;
+      const acciones = document.createElement('div');
+      acciones.className = 'flex gap-1';
+
+      const editar = document.createElement('button');
+      editar.textContent = '✏️';
+      editar.title = 'Editar';
+      editar.className = 'rounded-lg px-2 py-1 text-aguacero hover:bg-aguacero-suave';
+      editar.addEventListener('click', () => {
+        campoOriginal.value = usuario.usuario;
+        campoUsuario.value = usuario.usuario;
+        campoNombre.value = usuario.nombre;
+        campoClave.required = false;
+        campoClave.placeholder = 'dejar en blanco = no cambiarla';
+        (document.getElementById('ayuda-clave') as HTMLElement).textContent = 'Blanco = mantiene la actual.';
+      });
+
+      const borrar = document.createElement('button');
+      borrar.textContent = '🗑️';
+      borrar.title = indice === 0 ? 'El administrador no se puede eliminar' : 'Eliminar';
+      borrar.className = 'rounded-lg px-2 py-1 text-red-600 hover:bg-red-50 disabled:opacity-30';
+      borrar.disabled = indice === 0;
+      if (indice !== 0) {
+        borrar.addEventListener('click', async () => {
+          if (!confirm(`¿Eliminar al usuario "${usuario.usuario}"?`)) return;
+          if (!leerToken()) return;
+          const restantes = usuarios.filter((u) => u.usuario !== usuario.usuario);
+          await publicarUsuarios(restantes, `Aguacero admin: elimina usuario "${usuario.usuario}"`);
+          usuarios = restantes;
+          dibujar();
+        });
+      }
+
+      acciones.append(editar, borrar);
+      fila.append(acciones);
+      lista!.append(fila);
+    });
+  }
+
+  formulario.addEventListener('submit', async (suceso) => {
+    suceso.preventDefault();
+    parrafoError.classList.add('hidden');
+    if (!leerToken()) {
+      parrafoError.textContent = 'Falta el token de GitHub para publicar.';
+      parrafoError.classList.remove('hidden');
+      return;
+    }
+    try {
+      const nombreUsuario = campoUsuario.value.trim().toLowerCase();
+      const nombre = campoNombre.value.trim();
+      const clave = campoClave.value;
+      const original = campoOriginal.value;
+
+      if (!nombreUsuario || !nombre) {
+        parrafoError.textContent = 'Usuario y nombre son obligatorios.';
+        parrafoError.classList.remove('hidden');
+        return;
+      }
+      if (!original && !clave) {
+        parrafoError.textContent = 'La contraseña es obligatoria al crear un usuario.';
+        parrafoError.classList.remove('hidden');
+        return;
+      }
+      if (!original && usuarios.some((u) => u.usuario.toLowerCase() === nombreUsuario)) {
+        parrafoError.textContent = 'Ya existe un usuario con ese nombre.';
+        parrafoError.classList.remove('hidden');
+        return;
+      }
+
+      if (original) {
+        const hashNuevo = clave ? await sha256(clave) : null;
+        usuarios = usuarios.map((u) =>
+          u.usuario === original
+            ? { ...u, usuario: nombreUsuario, nombre, hash: hashNuevo ?? u.hash }
+            : u
+        );
+        await publicarUsuarios(usuarios, `Aguacero admin: actualiza usuario "${nombreUsuario}"`);
+        const sesionActual = leerSesion();
+        if (sesionActual && sesionActual.usuario === original) {
+          guardarSesion({ ...sesionActual, usuario: nombreUsuario, nombre });
+        }
+      } else {
+        const hashInicial = await sha256(clave);
+        usuarios = [...usuarios, { usuario: nombreUsuario, nombre, hash: hashInicial, esAdmin: false }];
+        await publicarUsuarios(usuarios, `Aguacero admin: crea usuario "${nombreUsuario}"`);
+      }
+
+      formulario.reset();
+      campoOriginal.value = '';
+      campoClave.required = true;
+      campoClave.placeholder = '';
+      (document.getElementById('ayuda-clave') as HTMLElement).textContent = 'Obligatoria al crear.';
+      dibujar();
+    } catch (error) {
+      parrafoError.textContent = `Error: ${(error as Error).message}`;
+      parrafoError.classList.remove('hidden');
+    }
+  });
+
+  const datos = await cargarDatos();
+  usuarios = datos.usuarios;
+  dibujar();
+</script>
