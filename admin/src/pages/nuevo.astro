@@ -1,71 +1,55 @@
 ---
-// Creación de un evento nuevo.
-import Plantabase from '../layouts/Plantabase.astro';
-import FormularioEvento from '../components/FormularioEvento.astro';
-import { cargarDatos } from '../lib/datos';
+import Base from '../layouts/Base.astro';
+import FormEvento from '../components/FormEvento.astro';
+import { supabase } from '../lib/supabase';
 
-const { cartelera } = await cargarDatos();
+const { data: categorias } = await supabase.from('categorias').select('*').order('nombre');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
-<Plantabase titulo="Nuevo evento" seccion="eventos">
-  <h1 class="text-2xl font-bold text-aguacero-oscuro mb-5">＋ Nuevo evento</h1>
-  <FormularioEvento categorias={cartelera.categorias} />
-</Plantabase>
+<Base titulo="Nuevo evento">
+  <h1 class="text-2xl font-bold text-slate-900 mb-6">＋ Nuevo evento</h1>
+  <FormEvento categorias={categorias ?? []} />
 
-<script>
-  import { anadirCampoContacto, leerFormulario, montarGestionContactos, validar } from '../lib/formulario';
-  import { cargarDatos } from '../lib/datos';
-  import { anunciandoProgreso, publicarCartelera, subirFlyer } from '../lib/publicar';
-  import { leerToken } from '../lib/sesion';
-  import type { Evento } from '../lib/tipos';
+  <script>
+    import { supabase, nuevoId } from '../lib/supabase';
 
-  const formulario = document.getElementById('formulario-evento') as HTMLFormElement;
-  const parrafoError = document.getElementById('error-formulario') as HTMLParagraphElement;
-  const botonGuardar = document.getElementById('btn-guardar') as HTMLButtonElement;
+    document.getElementById('form-evento')?.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const form = ev.target as HTMLFormElement;
+      const fd = new FormData(form);
+      const btn = document.getElementById('btn-guardar') as HTMLButtonElement;
+      btn.disabled = true;
+      btn.textContent = 'Guardando…';
 
-  // Hoy como fecha por defecto
-  (document.getElementById('fecha') as HTMLInputElement).value = new Date().toISOString().slice(0, 10);
+      const contactoRaw = (fd.get('contacto') as string ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
 
-  montarGestionContactos();
+      const { error } = await supabase.from('eventos').insert({
+        id: nuevoId(),
+        titulo: fd.get('titulo'),
+        descripcion: fd.get('descripcion') || '',
+        fecha: fd.get('fecha'),
+        hora: fd.get('hora'),
+        hora_apertura: (fd.get('hora_apertura') as string) || null,
+        lugar: fd.get('lugar'),
+        direccion: fd.get('direccion') || '',
+        precio: fd.get('precio') || '',
+        contacto: contactoRaw,
+        link_web: (fd.get('link_web') as string) || null,
+        imagen: fd.get('imagen') || '',
+        categoria_id: (fd.get('categoria_id') as string) || null,
+        organizador: fd.get('organizador') || '',
+        destacado: (form.querySelector('[name="destacado"]') as HTMLInputElement).checked,
+      });
 
-  formulario.addEventListener('submit', async (suceso) => {
-    suceso.preventDefault();
-    parrafoError.classList.add('hidden');
-
-    if (!validar(parrafoError)) return;
-    if (!leerToken()) {
-      parrafoError.textContent = 'Falta el token de GitHub para publicar. Cierra sesión y vuelve a entrar.';
-      parrafoError.classList.remove('hidden');
-      return;
-    }
-
-    botonGuardar.disabled = true;
-    try {
-      const datos = leerFormulario();
-      const evento: Evento = {
-        id: crypto.randomUUID(),
-        ...datos,
-        destacado: (document.getElementById('destacado') as HTMLInputElement).checked,
-        fechaPublicacion: new Date().toISOString().slice(0, 19),
-      };
-
-      const archivo = (document.getElementById('imagen-archivo') as HTMLInputElement).files?.[0];
-      if (archivo) {
-        anunciandoProgreso('Subiendo flyer…');
-        evento.imagen = await subirFlyer(archivo, evento.id);
+      if (error) {
+        (window as any).toast('Error al guardar: ' + error.message, 'error');
+        btn.disabled = false;
+        btn.textContent = '💾 Guardar';
+      } else {
+        (window as any).toast('Evento creado ✓');
+        const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+        setTimeout(() => (window.location.href = `${base}/`), 800);
       }
-
-      anunciandoProgreso('Publicando eventos.json…');
-      const { cartelera, usuarios } = await cargarDatos();
-      await publicarCartelera(
-        { categorias: cartelera.categorias, eventos: [...cartelera.eventos, evento] },
-        usuarios,
-        `Aguacero admin: crea evento "${evento.titulo}"`
-      );
-      window.location.href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
-    } catch (error) {
-      parrafoError.textContent = `Error al guardar: ${(error as Error).message}`;
-      parrafoError.classList.remove('hidden');
-      botonGuardar.disabled = false;
-    }
-  });
-</script>
+    });
+  </script>
+</Base>
