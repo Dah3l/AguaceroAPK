@@ -51,26 +51,6 @@
   ],
   "eventos": [
     {
-      "id": "mve2e2j307vklr",
-      "titulo": "Evento de prueba",
-      "descripcion": "Evento de prueba ",
-      "fecha": "2026-10-18",
-      "hora": "14:52",
-      "horaApertura": "13:52",
-      "lugar": "Sala Charlie Chaplin",
-      "direccion": "Calle 23 e/ L y M, Vedado",
-      "precio": "100 CUP general",
-      "contacto": [
-        "+53 56803949"
-      ],
-      "linkWeb": null,
-      "imagen": "",
-      "categoriaId": "cine",
-      "organizador": "ICAIC",
-      "destacado": true,
-      "fechaPublicacion": "2026-10-18T16:53:25.079407+00:00"
-    },
-    {
       "id": "mve5ssveuefbr5",
       "titulo": "UwU",
       "descripcion": "Prueba awaaaa ",
@@ -147,6 +127,26 @@
       "organizador": "Teatro Villanueva",
       "destacado": false,
       "fechaPublicacion": "2026-10-16T09:30:00+00:00"
+    },
+    {
+      "id": "mve2e2j307vklr",
+      "titulo": "Evento de prueba",
+      "descripcion": "Evento de prueba ",
+      "fecha": "2026-10-30",
+      "hora": "14:52",
+      "horaApertura": "13:52",
+      "lugar": "Sala Charlie Chaplin",
+      "direccion": "Calle 23 e/ L y M, Vedado",
+      "precio": "100 CUP general",
+      "contacto": [
+        "+53 56803949"
+      ],
+      "linkWeb": null,
+      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792361974650-k6an0g.jpg",
+      "categoriaId": "cine",
+      "organizador": "ICAIC",
+      "destacado": true,
+      "fechaPublicacion": "2026-10-18T16:53:25.079407+00:00"
     },
     {
       "id": "mve3n7ha7mbqyo",
