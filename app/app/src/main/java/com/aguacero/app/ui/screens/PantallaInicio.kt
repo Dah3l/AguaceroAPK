@@ -178,7 +178,8 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
 
             eventos.isEmpty() -> EstadoVacio(
                 Icons.Filled.EventBusy,
-                "No hay eventos con estos filtros 🌤️"
+                "No hay eventos 🌤️",
+                "Prueba con otros filtros o categorías"
             )
 
             else -> Box(
