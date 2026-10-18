@@ -64,7 +64,7 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
             .fillMaxSize()
             .pullRefresh(pullState)
     ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         // ---- Filtros sticky (no se mueven con el scroll) ----
         // ---- Chips de filtro por rango de fecha ----
         val rangos = listOf(
