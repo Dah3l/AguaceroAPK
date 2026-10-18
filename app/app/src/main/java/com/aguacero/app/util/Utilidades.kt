@@ -24,7 +24,7 @@ import java.util.Locale
 
 // ---------- Fechas ----------
 
-private val FORMATEADOR_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ES)
+private val FORMATEADOR_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale("es"))
 
 fun String.aLocalDate(): LocalDate? =
     try { LocalDate.parse(this.trim(), FORMATEADOR_FECHA) } catch (_: Exception) { null }
@@ -32,16 +32,16 @@ fun String.aLocalDate(): LocalDate? =
 /** "2026-10-18" -> "dom 18 oct 2026" */
 fun formatearFechaCorta(fechaIso: String): String {
     val f = fechaIso.aLocalDate() ?: return fechaIso
-    val diaSemana = f.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.ES)
+    val diaSemana = f.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale("es"))
         .replace(".", "")
-    return "$diaSemana ${f.dayOfMonth} ${f.month.getDisplayName(TextStyle.SHORT, Locale.ES)} ${f.year}"
+    return "$diaSemana ${f.dayOfMonth} ${f.month.getDisplayName(TextStyle.SHORT, Locale("es"))} ${f.year}"
 }
 
 /** "2026-10-18" -> "domingo 18 de octubre de 2026" */
 fun formatearFechaLarga(fechaIso: String): String {
     val f = fechaIso.aLocalDate() ?: return fechaIso
-    return "${f.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.ES)} ${f.dayOfMonth} " +
-        "de ${f.month.getDisplayName(TextStyle.FULL, Locale.ES)} de ${f.year}"
+    return "${f.dayOfWeek.getDisplayName(TextStyle.FULL, Locale("es"))} ${f.dayOfMonth} " +
+        "de ${f.month.getDisplayName(TextStyle.FULL, Locale("es"))} de ${f.year}"
 }
 
 /** ¿El evento es hoy? */
@@ -74,7 +74,7 @@ fun eventoFuturo(evento: Evento): Boolean {
     return try {
         val hora = LocalDateTime.parse(
             "${evento.fecha}T${evento.hora.ifBlank { "23:59" }}",
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm", Locale.ES)
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm", Locale("es"))
         )
         hora.isAfter(LocalDateTime.now())
     } catch (_: Exception) {
