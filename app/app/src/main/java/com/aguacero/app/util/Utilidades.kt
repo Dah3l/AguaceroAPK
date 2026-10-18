@@ -124,7 +124,7 @@ fun textoParaCompartir(evento: Evento): String = buildString {
     if (evento.direccion.isNotBlank()) append("   ${evento.direccion}\n")
     if (evento.precio.isNotBlank()) append("💰 ${evento.precio}\n")
     if (evento.contacto.isNotEmpty()) append("📞 ${evento.contacto.joinToString(", ")}\n")
-    if (evento.linkWeb.isNotBlank()) append("\n🔗 ${evento.linkWeb}")
+    if (!evento.linkWeb.isNullOrBlank()) append("\n🔗 ${evento.linkWeb}")
     append("\n\n#Aguacero #LaHabana")
 }
 
