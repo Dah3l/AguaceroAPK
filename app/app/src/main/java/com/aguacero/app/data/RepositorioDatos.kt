@@ -71,27 +71,31 @@ class RepositorioDatos(private val contexto: Context) {
     }
 
     /**
-     * Obtener los datos:
-     * 1. Si la caché tiene menos de 24h, se usa directamente (sin gastar datos).
-     * 2. Si no, se descarga; si la descarga falla, se cae a la caché aunque sea vieja.
+     * Obtener los datos (estrategia "red primero"):
+     * 1. Siempre intenta descargar de la red (salvo que se pida solo caché).
+     * 2. Si la descarga falla, usa la caché aunque sea vieja (modo offline).
+     * 3. Solo lanza excepción si no hay red NI caché.
      */
-    suspend fun obtener(forzarRefresco: Boolean = false): ResultadoDatos {
-        if (!forzarRefresco && cacheValida()) {
-            val cacheada = leerCache()
-            if (cacheada != null) return ResultadoDatos(cacheada, desdeCache = true)
-        }
-        return try {
-            val fresca = descargar()
-            ResultadoDatos(fresca, desdeCache = false)
-        } catch (e: Exception) {
-            val cacheada = leerCache()
-            if (cacheada != null) {
-                ResultadoDatos(cacheada, desdeCache = true)
-            } else {
-                throw e
+    suspend fun obtener(soloCache: Boolean = false): ResultadoDatos {
+        if (!soloCache) {
+            try {
+                val fresca = descargar()
+                return ResultadoDatos(fresca, desdeCache = false)
+            } catch (_: Exception) {
+                // Cae a caché abajo
             }
         }
+        val cacheada = leerCache()
+        if (cacheada != null) {
+            return ResultadoDatos(cacheada, desdeCache = true)
+        }
+        // Sin red ni caché: intentar de todos modos para dar error descriptivo
+        val fresca = descargar()
+        return ResultadoDatos(fresca, desdeCache = false)
     }
+
+    /** ¿La caché existe? (para saber si hay datos offline) */
+    fun hayCache(): Boolean = archivoCache().exists()
 
     /** IDs actualmente en caché — usado por el trabajador de notificaciones. */
     fun idsEnCache(): Set<String> = leerCache()?.eventos?.map { it.id }?.toSet() ?: emptySet()
