@@ -64,30 +64,7 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
             .pullRefresh(pullState)
     ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        // ---- Carrusel de Destacados ----
-        val destacados = modelo.eventosFiltrados().filter { it.destacado }.take(5)
-        if (destacados.isNotEmpty() && !estado.cargando) {
-            Text(
-                "⭐ Destacados",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 14.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) {
-                items(destacados, key = { it.id }) { evento ->
-                    TarjetaDestacado(
-                        evento = evento,
-                        categoria = modelo.categoriaDe(evento),
-                        alClic = { alAbrirDetalle(evento.id) }
-                    )
-                }
-            }
-        }
-
+        // ---- Filtros sticky (no se mueven con el scroll) ----
         // ---- Chips de filtro por rango de fecha ----
         val rangos = listOf(
             RangoFecha.HOY to "Hoy",
@@ -178,19 +155,46 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
 
             eventos.isEmpty() -> EstadoVacio(
                 Icons.Filled.EventBusy,
-                "No hay eventos 🌤️",
+                "No hay eventos",
                 "Prueba con otros filtros o categorías"
             )
 
             else -> Box(
                 modifier = Modifier.fillMaxSize()
             ) {
+                val destacados = eventos.filter { it.destacado }.take(5)
+                val normales = eventos.filter { !it.destacado }
                 LazyColumn(
                     contentPadding = PaddingValues(14.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(eventos, key = { it.id }) { evento ->
+                    // Destacados: scroll vertical con el resto, scroll horizontal propio
+                    if (destacados.isNotEmpty()) {
+                        item(key = "destacados_header") {
+                            Text(
+                                "Destacados",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
+                        item(key = "destacados_carousel") {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            ) {
+                                items(destacados, key = { it.id }) { evento ->
+                                    TarjetaDestacado(
+                                        evento = evento,
+                                        categoria = modelo.categoriaDe(evento),
+                                        alClic = { alAbrirDetalle(evento.id) }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    items(normales, key = { it.id }) { evento ->
                         TarjetaEvento(
                             evento = evento,
                             categoria = modelo.categoriaDe(evento),
