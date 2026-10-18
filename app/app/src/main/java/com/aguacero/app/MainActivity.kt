@@ -103,24 +103,12 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
                     .windowInsetsPadding(WindowInsets.statusBars)
                     .padding(horizontal = 16.dp, vertical = 14.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Image(
-                        painter = androidx.compose.ui.res.painterResource(
-                            id = com.aguacero.app.R.drawable.logo_aguacero
-                        ),
-                        contentDescription = "Logo Aguacero",
-                        modifier = Modifier.size(36.dp)
-                    )
-                    Text(
-                        "Aguacero",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
+                Text(
+                    "Aguacero",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
             }
         },
         bottomBar = {
