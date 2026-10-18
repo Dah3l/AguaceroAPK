@@ -41,6 +41,12 @@
       "nombre": "Teatro",
       "emoji": "🎭",
       "color": "#9C27B0"
+    },
+    {
+      "id": "videojuegos",
+      "nombre": "Videojuegos",
+      "emoji": "🎮",
+      "color": "#ad2f2f"
     }
   ],
   "eventos": [
