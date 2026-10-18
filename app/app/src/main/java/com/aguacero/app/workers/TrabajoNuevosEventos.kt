@@ -33,7 +33,7 @@ class TrabajoNuevosEventos(
 
         return try {
             // Forzar descarga para detectar cambios
-            val resultado = repositorio.obtener(forzarRefresco = true)
+            val resultado = repositorio.obtener()
             val idsVistos = preferencias.leerIdsVistos()
 
             val nuevos = resultado.datos.eventos.filter { it.id !in idsVistos }
