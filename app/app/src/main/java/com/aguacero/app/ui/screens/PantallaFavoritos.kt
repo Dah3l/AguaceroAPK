@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,13 +28,19 @@ fun PantallaFavoritos(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit)
     val eventos = modelo.eventosFavoritos()
 
     if (eventos.isEmpty()) {
-        EstadoVacio(
-            Icons.Filled.Favorite,
-            if (favoritos.isEmpty())
-                "Aún no tienes eventos favoritos.\nToca el corazón 🤍 en cualquier evento."
-            else
-                "Tus favoritos ya pasaron o se retiraron de la cartelera."
-        )
+        if (favoritos.isEmpty()) {
+            EstadoVacio(
+                Icons.Filled.FavoriteBorder,
+                "Sin favoritos 🤍",
+                "Toca el corazón en cualquier evento para guardarlo aquí"
+            )
+        } else {
+            EstadoVacio(
+                Icons.Filled.Favorite,
+                "Tus favoritos ya pasaron",
+                "Se retiraron de la cartelera"
+            )
+        }
         return
     }
 
