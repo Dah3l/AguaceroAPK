@@ -76,7 +76,7 @@ fun PantallaDetalle(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Este evento ya no está disponible 😕")
+            Text("Este evento ya no está disponible")
             Spacer(Modifier.height(12.dp))
             Button(onClick = alVolver) { Text("Volver a la cartelera") }
         }
