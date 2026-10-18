@@ -1,12 +1,15 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-/* Paleta azul del logo Aguacero */
 @theme {
-  --color-aguacero: #2e7cd6;
-  --color-aguacero-oscuro: #1b5aa8;
-  --color-aguacero-suave: #eaf3fc;
+  --color-aguacero: #2E7CD6;
+  --color-aguacero-oscuro: #1B5FB0;
+  --color-aguacero-muy-oscuro: #0F3D75;
+  --color-aguacero-claro: #BBDEFB;
+  --color-aguacero-suave: #E3F2FD;
 }
 
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #F8FAFC;
+  color: #1E293B;
 }
