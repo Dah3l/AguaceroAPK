@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 /** Rango de fecha seleccionable en los filtros. */
-enum class RangoFecha { HOY, MANANA, ESTE_FINDE, TODOS }
+enum class RangoFecha { HOY, MANANA, ESTE_FINDE, ESPECIFICA, TODOS }
 
 data class EstadoUI(
     val cargando: Boolean = true,
@@ -31,7 +31,8 @@ data class EstadoUI(
     // Filtros y búsqueda
     val busqueda: String = "",
     val categoriaActiva: String? = null,   // null = todas
-    val rangoFecha: RangoFecha = RangoFecha.TODOS
+    val rangoFecha: RangoFecha = RangoFecha.TODOS,
+    val fechaEspecifica: LocalDate? = null
 )
 
 /** ViewModel de la cartelera: carga, caché, filtros, búsqueda y favoritos. */
@@ -83,7 +84,15 @@ class ModeloCartelera(app: Application) : AndroidViewModel(app) {
     }
 
     fun filtrarRango(rango: RangoFecha) {
-        _estado.value = _estado.value.copy(rangoFecha = rango)
+        _estado.value = _estado.value.copy(rangoFecha = rango, fechaEspecifica = null)
+    }
+
+    fun filtrarFechaEspecifica(fecha: LocalDate) {
+        _estado.value = _estado.value.copy(rangoFecha = RangoFecha.ESPECIFICA, fechaEspecifica = fecha)
+    }
+
+    fun limpiarFechaEspecifica() {
+        _estado.value = _estado.value.copy(rangoFecha = RangoFecha.TODOS, fechaEspecifica = null)
     }
 
     fun alternarFavorito(id: String) {
@@ -107,6 +116,9 @@ class ModeloCartelera(app: Application) : AndroidViewModel(app) {
             RangoFecha.HOY -> lista.filter { esHoy(it.fecha) }
             RangoFecha.MANANA -> lista.filter { esManana(it.fecha) }
             RangoFecha.ESTE_FINDE -> lista.filter { esEsteFinde(it.fecha) }
+            RangoFecha.ESPECIFICA -> e.fechaEspecifica?.let { f ->
+                lista.filter { it.fecha.aLocalDate() == f }
+            } ?: lista
             RangoFecha.TODOS -> lista
         }
 
