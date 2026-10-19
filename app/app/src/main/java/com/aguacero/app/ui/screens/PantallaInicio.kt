@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.aguacero.app.ui.ModeloCartelera
+import com.aguacero.app.util.aLocalDate
 import com.aguacero.app.ui.RangoFecha
 import com.aguacero.app.ui.components.EstadoVacio
 import androidx.compose.material.ExperimentalMaterialApi
@@ -73,6 +74,8 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
             RangoFecha.MANANA to "Mañana",
             RangoFecha.ESTE_FINDE to "Este finde"
         )
+        var mostrarCalendario by remember { mutableStateOf(false) }
+
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -84,6 +87,40 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                     alClic = { modelo.filtrarRango(rango) }
                 )
             }
+            // Pill "+" para calendario
+            item {
+                ChipModerno(
+                    texto = "+",
+                    seleccionado = estado.rangoFecha == RangoFecha.ESPECIFICA,
+                    alClic = { mostrarCalendario = true }
+                )
+            }
+            // Pill de fecha específica activa (con X para quitar)
+            if (estado.rangoFecha == RangoFecha.ESPECIFICA && estado.fechaEspecifica != null) {
+                item {
+                    val f = estado.fechaEspecifica!!
+                    ChipModerno(
+                        texto = "${f.dayOfMonth} ${f.month.getDisplayName(java.time.format.TextStyle.SHORT, java.util.Locale("es"))} ✕",
+                        seleccionado = true,
+                        alClic = { modelo.limpiarFechaEspecifica() }
+                    )
+                }
+            }
+        }
+
+        // Dialog del calendario
+        if (mostrarCalendario) {
+            val fechasConEventos = estado.eventos.mapNotNull {
+                try { it.fecha.aLocalDate() } catch (e: Exception) { null }
+            }.toSet()
+            com.aguacero.app.ui.components.CalendarioEventos(
+                fechasConEventos = fechasConEventos,
+                alSeleccionar = { fecha ->
+                    modelo.filtrarFechaEspecifica(fecha)
+                    mostrarCalendario = false
+                },
+                alCerrar = { mostrarCalendario = false }
+            )
         }
 
         // ---- Chips de filtro por categoría ----
