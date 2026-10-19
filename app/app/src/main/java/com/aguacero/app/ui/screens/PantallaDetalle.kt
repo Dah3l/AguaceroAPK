@@ -98,6 +98,7 @@ fun PantallaDetalle(
     val scrollState = rememberScrollState()
     var mostrarHeader by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
     var mostrarCompleta by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    var relacionFlyer by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(4f / 3f) }
     var ultimoScroll by androidx.compose.runtime.remember { androidx.compose.runtime.mutableIntStateOf(0) }
 
     androidx.compose.runtime.LaunchedEffect(scrollState.value) {
@@ -135,12 +136,25 @@ fun PantallaDetalle(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(4f / 3f)
+                    .aspectRatio(relacionFlyer)
             ) {
                 AsyncImage(
                     model = evento.imagen,
                     contentDescription = "Imagen de ${evento.titulo}",
                     contentScale = ContentScale.Crop,
+                    onSuccess = { estado ->
+                        val d = estado.result.drawable
+                        val w = d.intrinsicWidth.toFloat()
+                        val h = d.intrinsicHeight.toFloat()
+                        if (w > 0 && h > 0) {
+                            val natural = w / h
+                            relacionFlyer = if (natural >= 1f) {
+                                minOf(natural, 4f / 3f)
+                            } else {
+                                maxOf(natural, 3f / 4f)
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable { mostrarCompleta = true }
@@ -504,8 +518,9 @@ fun PantallaDetalle(
         ) {
             var escala by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(1f) }
             var desplazamiento by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(androidx.compose.ui.geometry.Offset.Zero) }
-            val estadoTransformable = androidx.compose.foundation.gestures.rememberTransformableState { zoomCambio, _, _ ->
+            val estadoTransformable = androidx.compose.foundation.gestures.rememberTransformableState { zoomCambio, panCambio, _ ->
                 escala = (escala * zoomCambio).coerceIn(1f, 5f)
+                desplazamiento += panCambio * escala
             }
             Box(
                 modifier = Modifier
