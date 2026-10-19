@@ -114,6 +114,34 @@ fun chatearWhatsApp(contexto: Context, numero: String, mensaje: String) {
     }
 }
 
+
+/** Convierte "17:28" a "5:28 PM". */
+fun formatearHoraAMPM(hora: String): String {
+    return try {
+        val partes = hora.trim().split(":")
+        if (partes.size < 2) return hora
+        var h = partes[0].toInt()
+        val m = partes[1].take(2)
+        val ampm = if (h >= 12) "PM" else "AM"
+        h = when {
+            h == 0 -> 12
+            h > 12 -> h - 12
+            else -> h
+        }
+        "$h:$m $ampm"
+    } catch (_: Exception) { hora }
+}
+
+fun compartirGenerico(contexto: Context, mensaje: String) {
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, mensaje)
+    }
+    try {
+        contexto.startActivity(Intent.createChooser(intent, "Compartir"))
+    } catch (_: Exception) { }
+}
+
 fun compartirWhatsApp(contexto: Context, mensaje: String) {
     val intent = Intent(Intent.ACTION_VIEW).apply {
         data = Uri.parse("https://api.whatsapp.com/send?text=${Uri.encode(mensaje)}")
