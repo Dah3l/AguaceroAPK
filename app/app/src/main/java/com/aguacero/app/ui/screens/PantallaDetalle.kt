@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +25,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Message
@@ -53,6 +59,8 @@ import com.aguacero.app.ui.ModeloCartelera
 import com.aguacero.app.util.abrirTelefono
 import com.aguacero.app.util.abrirWeb
 import com.aguacero.app.util.chatearWhatsApp
+import com.aguacero.app.util.compartirGenerico
+import com.aguacero.app.util.formatearHoraAMPM
 import com.aguacero.app.util.compartirWhatsApp
 import com.aguacero.app.util.formatearFechaLarga
 import com.aguacero.app.util.textoParaCompartir
@@ -95,10 +103,11 @@ fun PantallaDetalle(
     val categoria = modelo.categoriaDe(evento)
     val esFav = favoritos.contains(evento.id)
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Contenido scrolleable
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
                 .verticalScroll(rememberScrollState())
         ) {
             // ---- Imagen full-bleed ----
@@ -127,10 +136,11 @@ fun PantallaDetalle(
                             )
                         )
                 )
-                // Botones flotantes
+                // Botones flotantes (con padding para el notch)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .windowInsetsPadding(WindowInsets.statusBars)
                         .padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -143,7 +153,7 @@ fun PantallaDetalle(
                         BotonCircular(
                             icono = Icons.Filled.Share,
                             descripcion = "Compartir",
-                            alClic = { compartirWhatsApp(contexto, textoParaCompartir(evento)) }
+                            alClic = { compartirGenerico(contexto, textoParaCompartir(evento)) }
                         )
                         BotonCircular(
                             icono = if (esFav) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
@@ -219,7 +229,12 @@ fun PantallaDetalle(
                         }
                         val fecha = formatearFechaLarga(evento.fecha)
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("📅", style = MaterialTheme.typography.bodyMedium)
+                            Icon(
+                                Icons.Filled.DateRange,
+                                contentDescription = null,
+                                tint = AzulPrimario,
+                                modifier = Modifier.size(18.dp)
+                            )
                             Spacer(Modifier.width(4.dp))
                             Text(
                                 fecha,
@@ -233,11 +248,20 @@ fun PantallaDetalle(
 
                     if (evento.hora.isNotBlank()) {
                         Spacer(Modifier.height(4.dp))
-                        Text(
-                            "🕐 ${evento.hora} h" + (if (!evento.horaApertura.isNullOrBlank()) " (apertura ${evento.horaApertura} h)" else ""),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                Icons.Filled.Schedule,
+                                contentDescription = null,
+                                tint = AzulPrimario,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                formatearHoraAMPM(evento.hora) + (if (!evento.horaApertura.isNullOrBlank()) " (apertura ${formatearHoraAMPM(evento.horaApertura!!)})" else ""),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray
+                            )
+                        }
                     }
 
                     Spacer(Modifier.height(20.dp))
@@ -344,46 +368,7 @@ fun PantallaDetalle(
                         Spacer(Modifier.height(20.dp))
                     }
 
-                    // Precio y botón
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column {
-                            Text(
-                                "Precio",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = Color.Gray
-                            )
-                            Text(
-                                if (evento.precio.isNotBlank()) evento.precio else "Gratis",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = AzulOscuro
-                            )
-                        }
-                        val numeroReserva = evento.contacto.firstOrNull()
-                        Button(
-                            onClick = {
-                                if (numeroReserva != null) {
-                                    chatearWhatsApp(
-                                        contexto,
-                                        numeroReserva,
-                                        "Hola, quiero reservar para: ${evento.titulo}"
-                                    )
-                                } else {
-                                    compartirWhatsApp(contexto, textoParaCompartir(evento))
-                                }
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = AzulPrimario),
-                            shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier.padding(start = 16.dp),
-                            enabled = true
-                        ) {
-                            Text("Reservar", fontWeight = FontWeight.Bold)
-                        }
-                    }
+
 
                     // Contactos adicionales
                     if (evento.contacto.size > 1) {
@@ -428,6 +413,56 @@ fun PantallaDetalle(
                     }
 
                     Spacer(Modifier.height(24.dp))
+                }
+            }
+        }
+
+        // ---- Barra inferior fija: precio + Reservar ----
+        androidx.compose.material3.Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding(),
+            color = Color.White,
+            shadowElevation = 8.dp
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        "Precio",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.Gray
+                    )
+                    Text(
+                        if (evento.precio.isNotBlank()) evento.precio else "Gratis",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = AzulOscuro
+                    )
+                }
+                val numeroReserva = evento.contacto.firstOrNull()
+                Button(
+                    onClick = {
+                        if (numeroReserva != null) {
+                            chatearWhatsApp(
+                                contexto,
+                                numeroReserva,
+                                "Hola, quiero reservar para: ${evento.titulo}"
+                            )
+                        } else {
+                            compartirWhatsApp(contexto, textoParaCompartir(evento))
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = AzulPrimario),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.padding(start = 16.dp)
+                ) {
+                    Text("Reservar", fontWeight = FontWeight.Bold)
                 }
             }
         }
