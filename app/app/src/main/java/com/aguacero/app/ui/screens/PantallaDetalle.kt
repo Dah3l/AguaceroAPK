@@ -204,26 +204,22 @@ fun PantallaDetalle(
                     )
                     Spacer(Modifier.height(12.dp))
 
-                    // Ubicación y fecha
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
+                    // Ubicación, fecha y hora: cada uno en su línea
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (evento.lugar.isNotBlank()) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     Icons.Filled.LocationOn,
                                     contentDescription = null,
                                     tint = AzulPrimario,
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(20.dp)
                                 )
-                                Spacer(Modifier.width(4.dp))
+                                Spacer(Modifier.width(8.dp))
                                 Text(
                                     evento.lugar,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Gray,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.DarkGray
                                 )
                             }
                         }
@@ -233,34 +229,32 @@ fun PantallaDetalle(
                                 Icons.Filled.DateRange,
                                 contentDescription = null,
                                 tint = AzulPrimario,
-                                modifier = Modifier.size(18.dp)
+                                modifier = Modifier.size(20.dp)
                             )
-                            Spacer(Modifier.width(4.dp))
+                            Spacer(Modifier.width(8.dp))
                             Text(
                                 fecha,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.Gray,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.DarkGray
                             )
                         }
-                    }
-
-                    if (evento.hora.isNotBlank()) {
-                        Spacer(Modifier.height(4.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                Icons.Filled.Schedule,
-                                contentDescription = null,
-                                tint = AzulPrimario,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(Modifier.width(4.dp))
-                            Text(
-                                formatearHoraAMPM(evento.hora) + (if (!evento.horaApertura.isNullOrBlank()) " (apertura ${formatearHoraAMPM(evento.horaApertura!!)})" else ""),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.Gray
-                            )
+                        if (evento.hora.isNotBlank()) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Filled.Schedule,
+                                    contentDescription = null,
+                                    tint = AzulPrimario,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    formatearHoraAMPM(evento.hora) + (if (!evento.horaApertura.isNullOrBlank()) " (apertura ${formatearHoraAMPM(evento.horaApertura!!)})" else ""),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.DarkGray
+                                )
+                            }
                         }
                     }
 
@@ -342,8 +336,14 @@ fun PantallaDetalle(
                                 )
                             }
                         }
-                        Spacer(Modifier.height(20.dp))
+                        Spacer(Modifier.height(16.dp))
                     }
+                    Spacer(Modifier.height(16.dp))
+                    androidx.compose.material3.HorizontalDivider(
+                        color = Color(0xFFE0E0E0),
+                        thickness = 1.dp
+                    )
+                    Spacer(Modifier.height(16.dp))
 
                     // Dirección
                     if (evento.direccion.isNotBlank()) {
@@ -417,14 +417,18 @@ fun PantallaDetalle(
             }
         }
 
-        // ---- Barra inferior fija: precio + Reservar ----
-        androidx.compose.material3.Surface(
+        // ---- Barra inferior fija: precio + Reservar (hasta el fondo) ----
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .navigationBarsPadding(),
-            color = Color.White,
-            shadowElevation = 8.dp
+                .background(Color.White)
+                .navigationBarsPadding()
         ) {
+            androidx.compose.material3.Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = Color.White,
+                shadowElevation = 8.dp
+            ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -464,6 +468,7 @@ fun PantallaDetalle(
                 ) {
                     Text("Reservar", fontWeight = FontWeight.Bold)
                 }
+            }
             }
         }
     }
