@@ -31,8 +31,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.aguacero.app.ui.theme.AzulOscuro
-import com.aguacero.app.ui.theme.AzulPrimario
+import androidx.compose.ui.graphics.Color
+
+private val AzulPrimario = Color(0xFF1786B4)
+private val AzulOscuro = Color(0xFF0A3C55)
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
