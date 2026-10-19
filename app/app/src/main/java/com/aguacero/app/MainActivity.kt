@@ -77,12 +77,29 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
     // ---- Vista de detalle (capa completa) ----
     val idDetalle = eventoAbierto
     if (idDetalle != null) {
+        // TAREA 4: botón/gesto atrás vuelve a la lista
+        androidx.activity.compose.BackHandler {
+            eventoAbierto = null
+        }
         PantallaDetalle(
             modelo = modelo,
             idEvento = idDetalle,
             alVolver = { eventoAbierto = null }
         )
         return
+    }
+
+    // TAREA 3: doble toque atrás para salir
+    val contexto = androidx.compose.ui.platform.LocalContext.current
+    var ultimoToque by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(0L) }
+    androidx.activity.compose.BackHandler {
+        val ahora = System.currentTimeMillis()
+        if (ahora - ultimoToque < 2000) {
+            (contexto as? android.app.Activity)?.finish()
+        } else {
+            ultimoToque = ahora
+            android.widget.Toast.makeText(contexto, "Toque de nuevo para salir", android.widget.Toast.LENGTH_SHORT).show()
+        }
     }
 
     Scaffold(
