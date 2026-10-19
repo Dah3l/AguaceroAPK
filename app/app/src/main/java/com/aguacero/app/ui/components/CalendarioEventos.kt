@@ -31,14 +31,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.graphics.Color
-
-private val AzulPrimario = Color(0xFF1786B4)
-private val AzulOscuro = Color(0xFF0A3C55)
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
+
+private val AzulPrimario = Color(0xFF1786B4)
+private val AzulOscuro = Color(0xFF0A3C55)
 
 /**
  * Diálogo con calendario mensual para filtrar eventos por fecha específica.
