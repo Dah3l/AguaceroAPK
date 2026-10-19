@@ -98,7 +98,8 @@ fun PantallaDetalle(
 
     androidx.compose.runtime.LaunchedEffect(scrollState.value) {
         val actual = scrollState.value
-        mostrarHeader = actual < ultimoScroll && actual > 200
+        // Mostrar si scrollea hacia arriba o está arriba del todo
+        mostrarHeader = actual < ultimoScroll || actual == 0
         ultimoScroll = actual
     }
 
@@ -152,33 +153,7 @@ fun PantallaDetalle(
                             )
                         )
                 )
-                // Botones flotantes (con padding para el notch)
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .windowInsetsPadding(WindowInsets.statusBars)
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    BotonCircular(
-                        icono = Icons.AutoMirrored.Filled.ArrowBack,
-                        descripcion = "Volver",
-                        alClic = alVolver
-                    )
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        BotonCircular(
-                            icono = Icons.Filled.Share,
-                            descripcion = "Compartir",
-                            alClic = { compartirGenerico(contexto, textoParaCompartir(evento)) }
-                        )
-                        BotonCircular(
-                            icono = if (esFav) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                            descripcion = "Favorito",
-                            alClic = { modelo.alternarFavorito(evento.id) },
-                            tinte = if (esFav) Color(0xFFE53935) else AzulOscuro
-                        )
-                    }
-                }
+
             }
 
             // ---- Tarjeta blanca superpuesta ----
