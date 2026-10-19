@@ -151,20 +151,20 @@
     {
       "id": "mve3n7ha7mbqyo",
       "titulo": "Evento Elden Ring",
-      "descripcion": "Evento Elden Ring ",
+      "descripcion": "Evento temático del videojuego Elden Ring, se harán rifas, concursos de cosplay, competencia de conocimiento, speedruns, no hits y mucho más. ",
       "fecha": "2026-10-30",
       "hora": "17:28",
       "horaApertura": "17:28",
       "lugar": "Sala Charlie Chaplin",
       "direccion": "Calle 23 e/ L y M, Vedado",
-      "precio": "100 CUP general",
+      "precio": "250 CUP",
       "contacto": [
         "+53 56803949"
       ],
       "linkWeb": null,
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792351615557-f7mn5d.jpg",
       "categoriaId": "videojuegos",
-      "organizador": "ICAIC",
+      "organizador": "FromFansware",
       "destacado": true,
       "fechaPublicacion": "2026-10-18T17:28:31.318136+00:00"
     },
