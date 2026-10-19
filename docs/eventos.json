@@ -73,18 +73,18 @@
     {
       "id": "mve7714uytsbwx",
       "titulo": "Exposición de Fotografía Dahel Alvarado Reyes",
-      "descripcion": "Exposición Fotográfica",
+      "descripcion": "Exposición Fotográfica del artista emergente Dahel Alvarado Reyes que estará presentando \"Sombras\" un conjunto de obras relacionadas con su vida en Cuba",
       "fecha": "2026-10-19",
       "hora": "14:00",
       "horaApertura": "13:30",
       "lugar": "Galería 23 y 12",
       "direccion": "Calle 23 e/ 10 y 12, Vedado",
-      "precio": "Entrada libre",
+      "precio": "500 CUP",
       "contacto": [
         "+53 56803949"
       ],
       "linkWeb": null,
-      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792351615557-f7mn5d.jpg",
+      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792372300225-c0vxa4.jpg",
       "categoriaId": "artes-visuales",
       "organizador": "Dahel Alvarado Reyes",
       "destacado": true,
