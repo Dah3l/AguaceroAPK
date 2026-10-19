@@ -49,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -199,7 +200,7 @@ fun PantallaDetalle(
                     Text(
                         evento.titulo,
                         style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         color = AzulOscuro
                     )
                     Spacer(Modifier.height(12.dp))
@@ -427,7 +428,7 @@ fun PantallaDetalle(
             androidx.compose.material3.Surface(
                 modifier = Modifier.fillMaxWidth(),
                 color = Color.White,
-                shadowElevation = 8.dp
+                shadowElevation = 0.dp
             ) {
             Row(
                 modifier = Modifier
@@ -450,6 +451,16 @@ fun PantallaDetalle(
                     )
                 }
                 val numeroReserva = evento.contacto.firstOrNull()
+                val interactionSource = androidx.compose.foundation.interaction.MutableInteractionSource()
+                val presionado by interactionSource.collectIsPressedAsState()
+                val escala by androidx.compose.animation.core.animateFloatAsState(
+                    targetValue = if (presionado) 0.92f else 1f,
+                    animationSpec = androidx.compose.animation.core.spring(
+                        dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
+                        stiffness = androidx.compose.animation.core.Spring.StiffnessLow
+                    ),
+                    label = "escalaBoton"
+                )
                 Button(
                     onClick = {
                         if (numeroReserva != null) {
@@ -464,7 +475,13 @@ fun PantallaDetalle(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = AzulPrimario),
                     shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .graphicsLayer {
+                            scaleX = escala
+                            scaleY = escala
+                        },
+                    interactionSource = interactionSource
                 ) {
                     Text("Reservar", fontWeight = FontWeight.Bold)
                 }
