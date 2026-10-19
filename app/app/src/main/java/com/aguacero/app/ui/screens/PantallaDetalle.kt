@@ -89,6 +89,17 @@ fun PantallaDetalle(
 
     val evento = modelo.eventoPorId(idEvento) ?: estado.eventos.find { it.id == idEvento }
 
+    // Header inteligente: aparece al hacer scroll hacia arriba
+    val scrollState = rememberScrollState()
+    var mostrarHeader by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    var ultimoScroll by androidx.compose.runtime.remember { androidx.compose.runtime.mutableIntStateOf(0) }
+
+    androidx.compose.runtime.LaunchedEffect(scrollState.value) {
+        val actual = scrollState.value
+        mostrarHeader = actual < ultimoScroll && actual > 200
+        ultimoScroll = actual
+    }
+
     if (evento == null) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -105,12 +116,13 @@ fun PantallaDetalle(
     val categoria = modelo.categoriaDe(evento)
     val esFav = favoritos.contains(evento.id)
 
+    Box(modifier = Modifier.fillMaxSize()) {
     Column(modifier = Modifier.fillMaxSize()) {
         // Contenido scrolleable
         Column(
             modifier = Modifier
                 .weight(1f)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
         ) {
             // ---- Imagen full-bleed ----
             Box(
@@ -420,6 +432,20 @@ fun PantallaDetalle(
         }
 
         // ---- Barra inferior fija: precio + Reservar (hasta el fondo) ----
+        // Sombra sutil arriba
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            Color.Black.copy(alpha = 0.08f)
+                        )
+                    )
+                )
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -489,6 +515,50 @@ fun PantallaDetalle(
             }
             }
         }
+    }
+
+    // ---- Header flotante inteligente ----
+    androidx.compose.animation.AnimatedVisibility(
+        visible = mostrarHeader,
+        enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.slideInVertically(),
+        exit = androidx.compose.animation.fadeOut() + androidx.compose.animation.slideOutVertically(),
+        modifier = Modifier.align(Alignment.TopCenter)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.4f),
+                            Color.Transparent
+                        )
+                    )
+                )
+                .windowInsetsPadding(WindowInsets.statusBars)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            BotonCircular(
+                icono = Icons.AutoMirrored.Filled.ArrowBack,
+                descripcion = "Volver",
+                alClic = alVolver
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                BotonCircular(
+                    icono = Icons.Filled.Share,
+                    descripcion = "Compartir",
+                    alClic = { compartirGenerico(contexto, textoParaCompartir(evento)) }
+                )
+                BotonCircular(
+                    icono = if (esFav) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    descripcion = "Favorito",
+                    alClic = { modelo.alternarFavorito(evento.id) },
+                    tinte = if (esFav) Color(0xFFE53935) else AzulOscuro
+                )
+            }
+        }
+    }
     }
 }
 
