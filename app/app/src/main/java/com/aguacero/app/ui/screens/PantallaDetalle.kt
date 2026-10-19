@@ -1,6 +1,7 @@
 package com.aguacero.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Message
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
@@ -94,6 +96,7 @@ fun PantallaDetalle(
     // Header inteligente: aparece al hacer scroll hacia arriba
     val scrollState = rememberScrollState()
     var mostrarHeader by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    var mostrarCompleta by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
     var ultimoScroll by androidx.compose.runtime.remember { androidx.compose.runtime.mutableIntStateOf(0) }
 
     androidx.compose.runtime.LaunchedEffect(scrollState.value) {
@@ -131,13 +134,15 @@ fun PantallaDetalle(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(320.dp)
+                    .aspectRatio(4f / 3f)
             ) {
                 AsyncImage(
                     model = evento.imagen,
                     contentDescription = "Imagen de ${evento.titulo}",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable { mostrarCompleta = true }
                 )
                 // Degradado sutil arriba para los botones
                 Box(
@@ -412,7 +417,7 @@ fun PantallaDetalle(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(4.dp)
+                .shadow(8.dp)
                 .background(Color.White)
                 .navigationBarsPadding()
         ) {
@@ -489,6 +494,57 @@ fun PantallaDetalle(
             .background(Color.White)
             .windowInsetsPadding(WindowInsets.statusBars)
     )
+
+    // ---- Visor pantalla completa ----
+    if (mostrarCompleta) {
+        androidx.compose.ui.window.Dialog(
+            onDismissRequest = { mostrarCompleta = false },
+            properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            var escala by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(1f) }
+            var desplazamiento by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(androidx.compose.ui.geometry.Offset.Zero) }
+            val estadoTransformable = androidx.compose.foundation.gestures.rememberTransformableState { zoomCambio, _, _ ->
+                escala = (escala * zoomCambio).coerceIn(1f, 5f)
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+                    .transformable(estadoTransformable)
+            ) {
+                AsyncImage(
+                    model = evento.imagen,
+                    contentDescription = "Imagen completa",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            scaleX = escala
+                            scaleY = escala
+                            translationX = desplazamiento.x
+                            translationY = desplazamiento.y
+                        }
+                )
+                // Botón cerrar
+                androidx.compose.material3.IconButton(
+                    onClick = { mostrarCompleta = false },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .windowInsetsPadding(WindowInsets.statusBars)
+                        .padding(16.dp)
+                        .size(44.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.9f))
+                ) {
+                    Icon(
+                        Icons.Filled.Close,
+                        contentDescription = "Cerrar",
+                        tint = Color.Black
+                    )
+                }
+            }
+        }
+    }
 
     // ---- Header flotante inteligente ----
     androidx.compose.animation.AnimatedVisibility(
