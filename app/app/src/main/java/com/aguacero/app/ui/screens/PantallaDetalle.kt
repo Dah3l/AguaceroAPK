@@ -527,14 +527,6 @@ fun PantallaDetalle(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Black.copy(alpha = 0.4f),
-                            Color.Transparent
-                        )
-                    )
-                )
                 .windowInsetsPadding(WindowInsets.statusBars)
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
