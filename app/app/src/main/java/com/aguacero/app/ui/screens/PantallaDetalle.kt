@@ -409,23 +409,10 @@ fun PantallaDetalle(
         }
 
         // ---- Barra inferior fija: precio + Reservar (hasta el fondo) ----
-        // Sombra sutil arriba
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(8.dp)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            Color.Black.copy(alpha = 0.08f)
-                        )
-                    )
-                )
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
+                .shadow(4.dp)
                 .background(Color.White)
                 .navigationBarsPadding()
         ) {
@@ -493,6 +480,15 @@ fun PantallaDetalle(
             }
         }
     }
+
+    // ---- Franja blanca fija para el notch (no scrollea) ----
+    Box(
+        modifier = Modifier
+            .align(Alignment.TopCenter)
+            .fillMaxWidth()
+            .background(Color.White)
+            .windowInsetsPadding(WindowInsets.statusBars)
+    )
 
     // ---- Header flotante inteligente ----
     androidx.compose.animation.AnimatedVisibility(
