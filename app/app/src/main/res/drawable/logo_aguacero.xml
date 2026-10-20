@@ -1,0 +1,75 @@
+<!-- Logo de Aguacero recreado como vector: círculo azul #5A8AAE con líneas de lluvia blancas. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Círculo azul de fondo -->
+    <path
+        android:fillColor="#5A8AAE"
+        android:pathData="M256,4 A252,252 0 1,0 256,508 A252,252 0 1,0 256,4 Z" />
+
+    <group>
+        <clip-path
+            android:pathData="M256,4 A252,252 0 1,0 256,508 A252,252 0 1,0 256,4 Z" />
+
+        <!-- Líneas de lluvia (barras blancas con extremos redondos) -->
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="34"
+            android:strokeLineCap="round"
+            android:pathData="M220,5 L370,152" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="34"
+            android:strokeLineCap="round"
+            android:pathData="M150,45 L297,190" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="34"
+            android:strokeLineCap="round"
+            android:pathData="M90,93 L198,200" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="34"
+            android:strokeLineCap="round"
+            android:pathData="M42,152 L280,390" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="34"
+            android:strokeLineCap="round"
+            android:pathData="M330,223 L387,280" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="34"
+            android:strokeLineCap="round"
+            android:pathData="M14,230 L60,283" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="34"
+            android:strokeLineCap="round"
+            android:pathData="M231,233 L284,287" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="34"
+            android:strokeLineCap="round"
+            android:pathData="M93,315 L147,369" />
+
+        <!-- Anillo superior derecho -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M370,124 A28,28 0 1,0 370,180 A28,28 0 1,0 370,124 Z" />
+        <path
+            android:fillColor="#5A8AAE"
+            android:pathData="M370,136 A16,16 0 1,0 370,168 A16,16 0 1,0 370,136 Z" />
+
+        <!-- Anillo inferior -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M280,362 A28,28 0 1,0 280,418 A28,28 0 1,0 280,362 Z" />
+        <path
+            android:fillColor="#5A8AAE"
+            android:pathData="M280,374 A16,16 0 1,0 280,406 A16,16 0 1,0 280,374 Z" />
+    </group>
+</vector>
