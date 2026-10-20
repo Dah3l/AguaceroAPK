@@ -29,15 +29,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.aguacero.app.ui.ModeloCartelera
-import com.aguacero.app.util.aLocalDate
 import com.aguacero.app.ui.RangoFecha
 import com.aguacero.app.ui.components.EstadoVacio
 import androidx.compose.material.ExperimentalMaterialApi
@@ -69,39 +65,31 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
             .pullRefresh(pullState)
     ) {
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        // ---- Filtros sticky (no se mueven con el scroll) ----
-        // ---- Chips de filtro por rango de fecha ----
-        val rangos = listOf(
-            RangoFecha.TODOS to "Todos",
-            RangoFecha.HOY to "Hoy",
-            RangoFecha.MANANA to "Mañana",
-            RangoFecha.ESTE_FINDE to "Este finde"
+        // ---- Buscador integrado ----
+        androidx.compose.material3.OutlinedTextField(
+            value = estado.busqueda,
+            onValueChange = { modelo.buscar(it) },
+            placeholder = { Text("Buscar por título, lugar o descripción…") },
+            leadingIcon = {
+                Icon(
+                    androidx.compose.material.icons.Icons.Filled.Search,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            singleLine = true
         )
-        var mostrarCalendario by remember { mutableStateOf(false) }
 
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(rangos) { (rango, nombre) ->
-                ChipModerno(
-                    texto = nombre,
-                    seleccionado = estado.rangoFecha == rango,
-                    alClic = { modelo.filtrarRango(rango) }
-                )
-            }
-            // Pill "+" para calendario
-            item {
-                ChipModerno(
-                    texto = "+",
-                    seleccionado = estado.rangoFecha == RangoFecha.ESPECIFICA,
-                    alClic = { mostrarCalendario = true }
-                )
-            }
-            // Pill de fecha específica activa (con X para quitar)
-            if (estado.rangoFecha == RangoFecha.ESPECIFICA && estado.fechaEspecifica != null) {
+        // ---- Pill de fecha específica activa (viene de la pestaña Calendario) ----
+        if (estado.rangoFecha == RangoFecha.ESPECIFICA && estado.fechaEspecifica != null) {
+            val f = estado.fechaEspecifica!!
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 item {
-                    val f = estado.fechaEspecifica!!
                     ChipModerno(
                         texto = "${f.dayOfMonth} ${f.month.getDisplayName(java.time.format.TextStyle.SHORT, java.util.Locale("es"))} ✕",
                         seleccionado = true,
@@ -109,21 +97,6 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                     )
                 }
             }
-        }
-
-        // Dialog del calendario
-        if (mostrarCalendario) {
-            val fechasConEventos = estado.eventos.mapNotNull {
-                try { it.fecha.aLocalDate() } catch (e: Exception) { null }
-            }.toSet()
-            com.aguacero.app.ui.components.CalendarioEventos(
-                fechasConEventos = fechasConEventos,
-                alSeleccionar = { fecha ->
-                    modelo.filtrarFechaEspecifica(fecha)
-                    mostrarCalendario = false
-                },
-                alCerrar = { mostrarCalendario = false }
-            )
         }
 
         // ---- Chips de filtro por categoría ----
