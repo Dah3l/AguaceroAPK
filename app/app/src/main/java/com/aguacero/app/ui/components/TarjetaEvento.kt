@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
@@ -277,20 +278,23 @@ fun EstadoVacio(
     }
 }
 
-/** Tarjeta grande para el carrusel de Destacados: imagen de fondo con degradado. */
+/** Tarjeta grande vertical para Destacados, estilo foto de referencia:
+ * imagen completa, corazón arriba-derecha, fecha y título abajo. */
 @Composable
 fun TarjetaDestacado(
     evento: Evento,
     categoria: Categoria?,
+    esFavorito: Boolean = false,
+    alAlternarFavorito: () -> Unit = {},
     alClic: () -> Unit,
     modificador: Modifier = Modifier
 ) {
     Card(
         onClick = alClic,
         modifier = modificador
-            .width(300.dp)
-            .height(190.dp),
-        shape = RoundedCornerShape(20.dp),
+            .width(270.dp)
+            .height(360.dp),
+        shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -337,38 +341,47 @@ fun TarjetaDestacado(
                     .fillMaxSize()
                     .background(
                         androidx.compose.ui.graphics.Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.75f)),
-                            startY = 80f
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
+                            startY = 300f
                         )
                     )
             )
-            // Contenido
+            // Corazón de favorito (arriba a la derecha)
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(12.dp)
+                    .size(40.dp)
+                    .clip(androidx.compose.foundation.shape.CircleShape)
+                    .background(Color.Black.copy(alpha = 0.35f))
+                    .clickable { alAlternarFavorito() },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = if (esFavorito) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    contentDescription = "Favorito",
+                    tint = if (esFavorito) Color(0xFFFF5252) else Color.White,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+            // Fecha y título (abajo)
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(14.dp)
+                    .padding(16.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Text("⭐", style = MaterialTheme.typography.labelMedium)
-                    InsigniaCategoria(categoria)
-                }
-                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = formatearFechaCorta(evento.fecha),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.White.copy(alpha = 0.9f)
+                )
+                Spacer(Modifier.height(4.dp))
                 Text(
                     text = evento.titulo,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = "📅 ${formatearFechaCorta(evento.fecha)} · 📍 ${evento.lugar}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.85f),
-                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
