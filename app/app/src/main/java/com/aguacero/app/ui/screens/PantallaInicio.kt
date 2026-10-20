@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.Modifier
@@ -51,7 +52,7 @@ import com.aguacero.app.ui.components.TarjetaEvento
  * Pantalla de Inicio: lista de eventos futuros ordenados por cercanía,
  * con filtros por categoría y rango de fecha, y tirada para actualizar.
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class, androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
     val estado by modelo.estado.collectAsState()
@@ -204,22 +205,39 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                             )
                         }
                         item(key = "destacados_carousel") {
-                            LazyRow(
-                                contentPadding = PaddingValues(horizontal = 16.dp),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            // Carrusel: la tarjeta central grande, las laterales
+                            // se achican; al soltar, se centra la más cercana (snap)
+                            val estadoPager = androidx.compose.foundation.pager.rememberPagerState(
+                                pageCount = { destacados.size }
+                            )
+                            androidx.compose.foundation.pager.HorizontalPager(
+                                state = estadoPager,
+                                contentPadding = PaddingValues(horizontal = 36.dp),
+                                pageSpacing = 14.dp,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(bottom = 4.dp)
-                            ) {
-                                items(destacados, key = { it.id }) { evento ->
-                                    TarjetaDestacado(
-                                        evento = evento,
-                                        categoria = modelo.categoriaDe(evento),
-                                        esFavorito = favoritos.contains(evento.id),
-                                        alAlternarFavorito = { modelo.alternarFavorito(evento.id) },
-                                        alClic = { alAbrirDetalle(evento.id) }
-                                    )
-                                }
+                            ) { pagina ->
+                                val evento = destacados[pagina]
+                                val desplazamiento = kotlin.math.abs(
+                                    estadoPager.currentPage - pagina +
+                                        estadoPager.currentPageOffsetFraction
+                                )
+                                TarjetaDestacado(
+                                    evento = evento,
+                                    categoria = modelo.categoriaDe(evento),
+                                    esFavorito = favoritos.contains(evento.id),
+                                    alAlternarFavorito = { modelo.alternarFavorito(evento.id) },
+                                    alClic = { alAbrirDetalle(evento.id) },
+                                    modificador = Modifier.graphicsLayer {
+                                        val escala = 1f - (desplazamiento * 0.10f)
+                                            .coerceIn(0f, 0.18f)
+                                        scaleX = escala
+                                        scaleY = escala
+                                        alpha = 1f - (desplazamiento * 0.25f)
+                                            .coerceIn(0f, 0.35f)
+                                    }
+                                )
                             }
                         }
                     }
