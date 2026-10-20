@@ -13,7 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -37,8 +37,8 @@ fun BarraNavegacion(
 ) {
     val items = listOf(
         Triple(0, Icons.Filled.Home, "Inicio"),
-        Triple(1, Icons.Filled.Favorite, "Favoritos"),
-        Triple(2, Icons.Filled.Search, "Buscar"),
+        Triple(1, Icons.Filled.CalendarMonth, "Calendario"),
+        Triple(2, Icons.Filled.Favorite, "Favoritos"),
         Triple(3, Icons.Filled.Settings, "Ajustes"),
     )
 
