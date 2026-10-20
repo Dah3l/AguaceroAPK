@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -66,11 +67,11 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
             .pullRefresh(pullState)
     ) {
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        // ---- Buscador integrado ----
-        androidx.compose.material3.OutlinedTextField(
+        // ---- Buscador integrado (píldora moderna) ----
+        androidx.compose.material3.TextField(
             value = estado.busqueda,
             onValueChange = { modelo.buscar(it) },
-            placeholder = { Text("Buscar por título, lugar o descripción…") },
+            placeholder = { Text("Buscar eventos…") },
             leadingIcon = {
                 Icon(
                     Icons.Filled.Search,
@@ -79,8 +80,16 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            singleLine = true
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .clip(androidx.compose.foundation.shape.RoundedCornerShape(28.dp)),
+            singleLine = true,
+            colors = androidx.compose.material3.TextFieldDefaults.colors(
+                focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                disabledIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                focusedContainerColor = androidx.compose.ui.graphics.Color(0xFFE8EEF2),
+                unfocusedContainerColor = androidx.compose.ui.graphics.Color(0xFFE8EEF2)
+            )
         )
 
         // ---- Pill de fecha específica activa (viene de la pestaña Calendario) ----
@@ -206,6 +215,8 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                                     TarjetaDestacado(
                                         evento = evento,
                                         categoria = modelo.categoriaDe(evento),
+                                        esFavorito = favoritos.contains(evento.id),
+                                        alAlternarFavorito = { modelo.alternarFavorito(evento.id) },
                                         alClic = { alAbrirDetalle(evento.id) }
                                     )
                                 }
