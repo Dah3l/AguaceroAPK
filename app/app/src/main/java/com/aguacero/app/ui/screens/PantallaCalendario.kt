@@ -44,8 +44,14 @@ fun PantallaCalendario(
         try { it.fecha.aLocalDate() } catch (e: Exception) { null }
     }.toSet()
 
-    // Mes actual + los próximos 5
-    val meses = (0..5).map { YearMonth.now().plusMonths(it.toLong()) }
+    // Meses dinámicos: desde hoy hasta el mes del evento más lejano
+    // (mínimo 6 meses aunque no haya eventos tan lejos)
+    val mesInicio = YearMonth.now()
+    val mesMasLejano = fechasConEventos.maxOrNull()?.let { YearMonth.from(it) }
+    val mesFin = maxOf(mesMasLejano ?: mesInicio, mesInicio.plusMonths(5))
+    val meses = generateSequence(mesInicio) { it.plusMonths(1) }
+        .takeWhile { it <= mesFin }
+        .toList()
 
     Column(
         modifier = Modifier
