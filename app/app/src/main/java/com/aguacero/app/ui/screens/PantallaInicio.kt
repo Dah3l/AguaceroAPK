@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EventBusy
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -72,7 +73,7 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
             placeholder = { Text("Buscar por título, lugar o descripción…") },
             leadingIcon = {
                 Icon(
-                    androidx.compose.material.icons.Icons.Filled.Search,
+                    Icons.Filled.Search,
                     contentDescription = null
                 )
             },
