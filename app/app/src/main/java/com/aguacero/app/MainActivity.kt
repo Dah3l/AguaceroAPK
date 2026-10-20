@@ -53,6 +53,7 @@ import com.aguacero.app.ui.screens.PantallaCalendario
 import com.aguacero.app.ui.screens.PantallaDetalle
 import com.aguacero.app.ui.screens.PantallaFavoritos
 import com.aguacero.app.ui.screens.PantallaInicio
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.aguacero.app.ui.theme.TemaAguacero
 import kotlinx.coroutines.launch
 
@@ -64,6 +65,7 @@ import kotlinx.coroutines.launch
  */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
