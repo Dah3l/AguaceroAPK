@@ -71,26 +71,6 @@
       "fechaPublicacion": "2026-10-18T18:28:52.601822+00:00"
     },
     {
-      "id": "mve7714uytsbwx",
-      "titulo": "Exposición de Fotografía Dahel Alvarado Reyes",
-      "descripcion": "Exposición Fotográfica del artista emergente Dahel Alvarado Reyes que estará presentando \"Sombras\" un conjunto de obras relacionadas con su vida en Cuba",
-      "fecha": "2026-10-19",
-      "hora": "14:00",
-      "horaApertura": "13:30",
-      "lugar": "Galería 23 y 12",
-      "direccion": "Calle 23 e/ 10 y 12, Vedado",
-      "precio": "500 CUP",
-      "contacto": [
-        "+53 56803949"
-      ],
-      "linkWeb": null,
-      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792372300225-c0vxa4.jpg",
-      "categoriaId": "artes-visuales",
-      "organizador": "Dahel Alvarado Reyes",
-      "destacado": true,
-      "fechaPublicacion": "2026-10-18T19:07:54.412332+00:00"
-    },
-    {
       "id": "a1b2c3d4-0005-4000-8000-000000000005",
       "titulo": "Bailoterapia Gigante en el Malecón",
       "descripcion": "Clase abierta de baile con instructores y DJ invitado frente al Castillo de la Fuerza. Trae ropa cómoda y agua. Actividad gratuita para toda la familia.",
@@ -107,6 +87,27 @@
       "organizador": "Oficina del Historiador",
       "destacado": true,
       "fechaPublicacion": "2026-10-13T08:00:00+00:00"
+    },
+    {
+      "id": "mve7714uytsbwx",
+      "titulo": "Exposición de Fotografía Dahel Alvarado Reyes",
+      "descripcion": "Exposición Fotográfica del artista emergente Dahel Alvarado Reyes que estará presentando \"Sombras\" un conjunto de obras relacionadas con su vida en Cuba",
+      "fecha": "2026-10-24",
+      "hora": "14:00",
+      "horaApertura": "13:30",
+      "lugar": "Galería 23 y 12",
+      "direccion": "Calle 23 e/ 10 y 12, Vedado",
+      "precio": "500 CUP",
+      "contacto": [
+        "+53 56803949",
+        "correo@ejemplo.cu"
+      ],
+      "linkWeb": null,
+      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792372300225-c0vxa4.jpg",
+      "categoriaId": "artes-visuales",
+      "organizador": "Dahel Alvarado Reyes",
+      "destacado": true,
+      "fechaPublicacion": "2026-10-18T19:07:54.412332+00:00"
     },
     {
       "id": "a1b2c3d4-0002-4000-8000-000000000002",
