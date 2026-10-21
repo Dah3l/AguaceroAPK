@@ -28,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Favorite
@@ -64,6 +65,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.aguacero.app.ui.ModeloCartelera
 import com.aguacero.app.util.abrirTelefono
+import com.aguacero.app.util.proximaFecha
+import com.aguacero.app.util.formatearFechaCorta
+import com.aguacero.app.util.fechasEfectivas
+import com.aguacero.app.util.abrirCorreo
 import com.aguacero.app.util.abrirWeb
 import com.aguacero.app.util.chatearWhatsApp
 import com.aguacero.app.util.compartirGenerico
@@ -234,7 +239,12 @@ fun PantallaDetalle(
                                 )
                             }
                         }
-                        val fecha = formatearFechaLarga(evento.fecha)
+                        val fechasEv = evento.fechasEfectivas()
+                        val fecha = if (fechasEv.size <= 1) {
+                            formatearFechaLarga(evento.proximaFecha())
+                        } else {
+                            fechasEv.joinToString(" · ") { formatearFechaCorta(it) }
+                        }
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 Icons.Filled.DateRange,
@@ -260,7 +270,9 @@ fun PantallaDetalle(
                                 )
                                 Spacer(Modifier.width(8.dp))
                                 Text(
-                                    formatearHoraAMPM(evento.hora) + (if (!evento.horaApertura.isNullOrBlank()) " (apertura ${formatearHoraAMPM(evento.horaApertura!!)})" else ""),
+                                    formatearHoraAMPM(evento.hora) +
+                                        (if (!evento.horaFin.isNullOrBlank()) " – ${formatearHoraAMPM(evento.horaFin!!)}" else "") +
+                                        (if (!evento.horaApertura.isNullOrBlank()) " (apertura ${formatearHoraAMPM(evento.horaApertura!!)})" else ""),
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Medium,
                                     color = Color.DarkGray
@@ -289,7 +301,7 @@ fun PantallaDetalle(
                     }
 
                     // Organizador
-                    if (evento.organizador.isNotBlank()) {
+                    if (evento.organizador.isNotBlank() || evento.correo.isNotBlank()) {
                         Text(
                             "Organizador",
                             style = MaterialTheme.typography.titleMedium,
@@ -311,7 +323,7 @@ fun PantallaDetalle(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        evento.organizador.take(1).uppercase(),
+                                        evento.organizador.ifBlank { "@" }.take(1).uppercase(),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = AzulPrimario
@@ -320,7 +332,7 @@ fun PantallaDetalle(
                                 Spacer(Modifier.width(12.dp))
                                 Column {
                                     Text(
-                                        evento.organizador,
+                                        evento.organizador.ifBlank { "Contacto" },
                                         style = MaterialTheme.typography.bodyLarge,
                                         fontWeight = FontWeight.SemiBold,
                                         color = AzulOscuro
@@ -344,6 +356,27 @@ fun PantallaDetalle(
                                     icono = Icons.Filled.Message,
                                     descripcion = "WhatsApp",
                                     alClic = { compartirWhatsApp(contexto, textoParaCompartir(evento)) }
+                                )
+                            }
+                        }
+                        if (evento.correo.isNotBlank()) {
+                            Spacer(Modifier.height(10.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable { abrirCorreo(contexto, evento.correo) }
+                            ) {
+                                Icon(
+                                    Icons.Filled.Email,
+                                    contentDescription = null,
+                                    tint = AzulPrimario,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    evento.correo,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.DarkGray
                                 )
                             }
                         }
