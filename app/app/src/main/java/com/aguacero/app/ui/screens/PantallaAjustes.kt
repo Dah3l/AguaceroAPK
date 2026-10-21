@@ -98,7 +98,7 @@ fun PantallaAjustes(preferencias: AlmacenPreferencias) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text("Notificaciones de nuevos eventos", fontWeight = FontWeight.SemiBold)
                     Text(
-                        "Te avisamos cada 6 horas si hay eventos nuevos en la cartelera.",
+                        "Revisamos cada 15 minutos si hay eventos nuevos en la cartelera.",
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
