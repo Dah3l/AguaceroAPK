@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Primer plano del icono adaptativo: el logo de Aguacero reducido
+     al 62% central (zona segura de las máscaras del launcher). -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/logo_aguacero"
+    android:insetLeft="19%"
+    android:insetTop="19%"
+    android:insetRight="19%"
+    android:insetBottom="19%" />
