@@ -64,21 +64,35 @@ fun esEsteFinde(fechaIso: String): Boolean {
     return !f.isBefore(findeInicio) && !f.isAfter(findeFin)
 }
 
-/** ¿El evento sigue siendo futuro (fecha + hora)? */
+/** Todas las fechas ISO del evento (usa `fecha` si no hay lista). */
+fun Evento.fechasEfectivas(): List<String> =
+    if (fechas.isNotEmpty()) fechas.sorted() else listOf(fecha)
+
+/** La próxima fecha del evento: la más cercana que no haya pasado. */
+fun Evento.proximaFecha(): String {
+    val hoy = LocalDate.now().toString()
+    val lista = fechasEfectivas()
+    return lista.firstOrNull { it >= hoy } ?: lista.lastOrNull() ?: fecha
+}
+
+/** ¿El evento sigue siendo futuro (alguna fecha + hora)? */
 fun eventoFuturo(evento: Evento): Boolean {
-    val f = evento.fecha.aLocalDate() ?: return false
     val hoy = LocalDate.now()
-    if (f.isAfter(hoy)) return true
-    if (f.isBefore(hoy)) return false
-    // Es hoy: se mantiene si la hora no ha pasado
-    return try {
-        val hora = LocalDateTime.parse(
-            "${evento.fecha}T${evento.hora.ifBlank { "23:59" }}",
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm", Locale("es"))
-        )
-        hora.isAfter(LocalDateTime.now())
-    } catch (_: Exception) {
-        true
+    return evento.fechasEfectivas().any { fechaIso ->
+        val f = fechaIso.aLocalDate() ?: return@any false
+        when {
+            f.isAfter(hoy) -> true
+            f.isBefore(hoy) -> false
+            else -> try {
+                val hora = LocalDateTime.parse(
+                    "${fechaIso}T${evento.hora.ifBlank { "23:59" }}",
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm", Locale("es"))
+                )
+                hora.isAfter(LocalDateTime.now())
+            } catch (_: Exception) {
+                true
+            }
+        }
     }
 }
 
@@ -160,16 +174,27 @@ fun compartirWhatsApp(contexto: Context, mensaje: String) {
     }
 }
 
+/** Abre el cliente de correo para escribir a la dirección dada. */
+fun abrirCorreo(contexto: Context, correo: String) {
+    try {
+        val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$correo"))
+        contexto.startActivity(intent)
+    } catch (_: Exception) {
+    }
+}
+
 fun textoParaCompartir(evento: Evento): String = buildString {
     append("🌧️ *Aguacero* te presenta:\n\n")
     append("*${evento.titulo}* 🎉\n")
-    append("📅 ${formatearFechaLarga(evento.fecha)}")
+    append("📅 ${formatearFechaLarga(evento.proximaFecha())}")
     if (evento.hora.isNotBlank()) append(" 🕐 ${evento.hora}")
+    if (!evento.horaFin.isNullOrBlank()) append(" – ${evento.horaFin}")
     append("\n")
     if (evento.lugar.isNotBlank()) append("📍 ${evento.lugar}\n")
     if (evento.direccion.isNotBlank()) append("   ${evento.direccion}\n")
     if (evento.precio.isNotBlank()) append("💰 ${evento.precio}\n")
     if (evento.contacto.isNotEmpty()) append("📞 ${evento.contacto.joinToString(", ")}\n")
+    if (evento.correo.isNotBlank()) append("✉️ ${evento.correo}\n")
     if (!evento.linkWeb.isNullOrBlank()) append("\n🔗 ${evento.linkWeb}")
     append("\n\n#Aguacero #LaHabana")
 }
