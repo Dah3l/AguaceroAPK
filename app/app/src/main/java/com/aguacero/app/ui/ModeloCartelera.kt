@@ -11,6 +11,8 @@ import com.aguacero.app.util.aLocalDate
 import com.aguacero.app.util.esEsteFinde
 import com.aguacero.app.util.esHoy
 import com.aguacero.app.util.eventoFuturo
+import com.aguacero.app.util.proximaFecha
+import com.aguacero.app.util.fechasEfectivas
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -63,7 +65,7 @@ class ModeloCartelera(app: Application) : AndroidViewModel(app) {
                     desdeCache = resultado.desdeCache,
                     eventos = resultado.datos.eventos
                         .filter { eventoFuturo(it) }
-                        .sortedBy { it.fecha },
+                        .sortedBy { it.proximaFecha() },
                     categorias = resultado.datos.categorias
                 )
             } catch (e: Exception) {
@@ -103,6 +105,10 @@ class ModeloCartelera(app: Application) : AndroidViewModel(app) {
     private fun esManana(fechaIso: String): Boolean =
         fechaIso.aLocalDate() == LocalDate.now().plusDays(1)
 
+    /** ¿Alguna fecha del evento cumple el criterio? */
+    private fun algunaFecha(evento: Evento, criterio: (String) -> Boolean): Boolean =
+        evento.fechasEfectivas().any(criterio)
+
     /** Lista final aplicando categoría + rango de fecha + búsqueda. */
     fun eventosFiltrados(): List<Evento> {
         val e = _estado.value
@@ -113,11 +119,11 @@ class ModeloCartelera(app: Application) : AndroidViewModel(app) {
         }
 
         lista = when (e.rangoFecha) {
-            RangoFecha.HOY -> lista.filter { esHoy(it.fecha) }
-            RangoFecha.MANANA -> lista.filter { esManana(it.fecha) }
-            RangoFecha.ESTE_FINDE -> lista.filter { esEsteFinde(it.fecha) }
+            RangoFecha.HOY -> lista.filter { algunaFecha(it) { f -> esHoy(f) } }
+            RangoFecha.MANANA -> lista.filter { algunaFecha(it) { f -> esManana(f) } }
+            RangoFecha.ESTE_FINDE -> lista.filter { algunaFecha(it) { f -> esEsteFinde(f) } }
             RangoFecha.ESPECIFICA -> e.fechaEspecifica?.let { f ->
-                lista.filter { it.fecha.aLocalDate() == f }
+                lista.filter { it.fechasEfectivas().any { iso -> iso.aLocalDate() == f } }
             } ?: lista
             RangoFecha.TODOS -> lista
         }
