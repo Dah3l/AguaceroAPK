@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icono del splash: el logo de Aguacero al 66% central, para que el
+     círculo se vea completo sobre el fondo blanco y no lo recorte
+     la máscara del sistema. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/logo_aguacero"
+    android:insetLeft="17%"
+    android:insetTop="17%"
+    android:insetRight="17%"
+    android:insetBottom="17%" />
