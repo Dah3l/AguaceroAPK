@@ -1,7 +1,12 @@
 package com.aguacero.app
 
+import android.Manifest
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
@@ -40,6 +45,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,6 +69,9 @@ import com.aguacero.app.ui.screens.PantallaFavoritos
 import com.aguacero.app.ui.screens.PantallaInicio
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.aguacero.app.ui.theme.TemaAguacero
+import com.aguacero.app.util.crearCanalNotificaciones
+import com.aguacero.app.util.programarRevisionEventos
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
@@ -72,23 +81,68 @@ import kotlinx.coroutines.launch
  * el futuro sistema de notificaciones.
  */
 class MainActivity : ComponentActivity() {
+
+    /** ID de evento que llega al tocar una notificación (deep link). */
+    private val eventoNotificacion = mutableStateOf<String?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        crearCanalNotificaciones(this)
+        eventoNotificacion.value = intent?.getStringExtra("evento_id")
         setContent {
             TemaAguacero {
-                AppAguacero()
+                AppAguacero(
+                    eventoEntrante = eventoNotificacion.value,
+                    alConsumirEvento = { eventoNotificacion.value = null }
+                )
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        eventoNotificacion.value = intent.getStringExtra("evento_id")
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
+fun AppAguacero(
+    modelo: ModeloCartelera = viewModel(),
+    eventoEntrante: String? = null,
+    alConsumirEvento: () -> Unit = {}
+) {
     var pestana by rememberSaveable { mutableStateOf(0) }
     var eventoAbierto by rememberSaveable { mutableStateOf<String?>(null) }
+    val contextoApp = LocalContext.current
+
+    // Arranque: programar la revisión de novedades y pedir el permiso de
+    // notificaciones la primera vez (Android 13+)
+    val lanzadorPermisoNotif = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { }
+    LaunchedEffect(Unit) {
+        if (modelo.preferencias.notificacionesActivas.first()) {
+            programarRevisionEventos(contextoApp)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                !modelo.preferencias.permisoPedido()
+            ) {
+                modelo.preferencias.marcarPermisoPedido()
+                lanzadorPermisoNotif.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    // Deep link: abrir el detalle del evento de la notificación tocada
+    LaunchedEffect(eventoEntrante) {
+        if (eventoEntrante != null) {
+            eventoAbierto = eventoEntrante
+            alConsumirEvento()
+        }
+    }
     val estadoCajon = rememberDrawerState(DrawerValue.Closed)
     val alcance = rememberCoroutineScope()
     var dialogoMenu by remember { mutableStateOf<String?>(null) }
