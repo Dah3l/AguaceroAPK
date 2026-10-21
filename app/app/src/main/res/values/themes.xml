@@ -7,7 +7,7 @@
 
     <!-- Splash al abrir la app: fondo azul primario con el logo de Aguacero -->
     <style name="Tema.Aguacero.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#1786B4</item>
+        <item name="windowSplashScreenBackground">#FFFFFF</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo_aguacero</item>
         <item name="postSplashScreenTheme">@style/Tema.Aguacero</item>
     </style>
