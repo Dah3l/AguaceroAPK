@@ -204,6 +204,31 @@
       "fechaPublicacion": "2026-10-16T09:30:00+00:00"
     },
     {
+      "id": "mvim7b9ic0zczu",
+      "titulo": "Convención Otaku",
+      "descripcion": "Convención Otaku donde se harán cosplays, concursos de conocimientos e intercambios. ",
+      "fecha": "2026-10-25",
+      "hora": "18:00",
+      "horaApertura": null,
+      "horaFin": "12:00",
+      "lugar": "Cine Riviera",
+      "direccion": "Calle 23 e/ G y H, Vedado",
+      "precio": "500 CUP",
+      "contacto": [
+        "+53 56803949"
+      ],
+      "correo": "",
+      "fechas": [
+        "2026-10-25"
+      ],
+      "linkWeb": null,
+      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792617541927-v9zrub.jpg",
+      "categoriaId": "artes-visuales",
+      "organizador": "AnimeFandom Havana",
+      "destacado": false,
+      "fechaPublicacion": "2026-10-21T21:19:07.559818+00:00"
+    },
+    {
       "id": "mve3n7ha7mbqyo",
       "titulo": "Evento Elden Ring",
       "descripcion": "Adéntrate en las Tierras Intermedias en una noche épica dedicada al universo de Elden Ring. Un evento temático donde la comunidad gamer cubana se reúne para celebrar el GOTY de FromSoftware.\n\n*Actividades:*\n- *Torneo de PvP*: Demuestra tu habilidad en combates 1v1. Inscripción gratuita, premio para el campeón.\n- *Concurso de cosplay*: Ven disfrazado de tu personaje favorito — Malenia, Ranni, Blaidd, o crea tu propio Tiznado. Jurado y premio del público.\n- *Speedrun en vivo*: Los mejores runners de la comunidad intentarán romper récords ante el público.\n- *Trivia de lore*: ¿Cuánto sabes de la historia de las Tierras Intermedias? Preguntas para novatos y veteranos.\n- *Zona free play*: Consolas disponibles para jugar Elden Ring y Shadow of the Erdtree durante toda la noche.\n\n*Además:* rifas de merchandising, música ambiental del juego, proyección de cinemáticas en pantalla gigante y un bar temático con tragos inspirados en el juego.\n\nNo importa si eres un veterano de los Souls o si apenas escuchaste hablar del Círculo de Elden — esta noche es para todos los que aman los mundos oscuros y desafiantes de FromSoftware. ¡No te lo pierdas, Sin Luz!",
