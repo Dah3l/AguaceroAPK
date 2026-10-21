@@ -159,25 +159,25 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
         drawerState = estadoCajon,
         drawerContent = {
             ModalDrawerSheet {
-                Box(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            Brush.horizontalGradient(
-                                colors = listOf(
-                                    Color(0xFF1786B4),
-                                    Color(0xFF0F5E83),
-                                    Color(0xFF0A3C55)
-                                )
-                            )
-                        )
-                        .padding(horizontal = 16.dp, vertical = 20.dp)
+                        .padding(horizontal = 16.dp, vertical = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Image(
+                        painter = painterResource(R.drawable.logo_aguacero),
+                        contentDescription = "Logo Aguacero",
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape)
+                    )
+                    Spacer(Modifier.width(12.dp))
                     Text(
                         "Aguacero",
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color(0xFF0A3C55)
                     )
                 }
                 Spacer(Modifier.padding(vertical = 6.dp))
