@@ -105,6 +105,31 @@
       "fechaPublicacion": "2026-10-18T18:28:52.601822+00:00"
     },
     {
+      "id": "mvib4ja6lku8xn",
+      "titulo": "Etiquetar: ¿Arte o Responsabilidad?",
+      "descripcion": "Encuentro de formación profesional para analizar junto a un panel de profesionales todo sobre el etiquetado: cuál es el ideal para tus productos, los diferentes materiales y tecnologías, los sistemas de impresión y cómo te permiten fortalecer la comercialización. Un encuentro dedicado a analizar el etiquetado como parte esencial de la identidad, producción y comercialización de un producto. Dirigido a diseñadores, productores, impresores y emprendedores. Inscripciones hasta el 22 de octubre.",
+      "fecha": "2026-10-23",
+      "hora": "16:00",
+      "horaApertura": null,
+      "horaFin": "18:00",
+      "lugar": "Cairostudio",
+      "direccion": "Calle 24 e/ 17 y 19 #257, Vedado",
+      "precio": "",
+      "contacto": [
+        "+53 55832514"
+      ],
+      "correo": "contacto@cairostudio.es",
+      "fechas": [
+        "2026-10-23"
+      ],
+      "linkWeb": null,
+      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792598924021-csnoyw.jpg",
+      "categoriaId": "artes-visuales",
+      "organizador": "Cairostudio, Negolution y Central Estudio",
+      "destacado": true,
+      "fechaPublicacion": "2026-10-21T16:09:02.305842+00:00"
+    },
+    {
       "id": "a1b2c3d4-0005-4000-8000-000000000005",
       "titulo": "Bailoterapia Gigante en el Malecón",
       "descripcion": "Clase abierta de baile con instructores y DJ invitado frente al Castillo de la Fuerza. Trae ropa cómoda y agua. Actividad gratuita para toda la familia.",
