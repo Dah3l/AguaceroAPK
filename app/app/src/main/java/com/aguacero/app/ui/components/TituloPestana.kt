@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 @Composable
 fun TituloPestana(texto: String, modificador: Modifier = Modifier) {
     Text(
-        texto = texto,
+        text = texto,
         style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.ExtraBold,
         color = Color(0xFF0A3C55),
