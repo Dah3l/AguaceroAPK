@@ -74,6 +74,24 @@ fun InsigniaCategoria(categoria: Categoria?, modificador: Modifier = Modifier) {
 }
 
 /** Tarjeta de evento para las listas de Inicio y Favoritos. */
+/** Sello verde de "Nuevo" para eventos recién publicados. */
+@Composable
+fun PillNuevo() {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(Color(0xFF16A34A))
+            .padding(horizontal = 10.dp, vertical = 5.dp)
+    ) {
+        Text(
+            "Nuevo",
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+    }
+}
+
 @Composable
 fun TarjetaEvento(
     evento: Evento,
@@ -81,7 +99,8 @@ fun TarjetaEvento(
     esFavorito: Boolean,
     alClic: () -> Unit,
     alAlternarFavorito: () -> Unit,
-    modificador: Modifier = Modifier
+    modificador: Modifier = Modifier,
+    esNuevo: Boolean = false
 ) {
     Card(
         onClick = alClic,
@@ -168,6 +187,10 @@ fun TarjetaEvento(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 InsigniaCategoria(categoria)
+                if (esNuevo) {
+                    Spacer(Modifier.width(6.dp))
+                    PillNuevo()
+                }
                 Spacer(Modifier.weight(1f))
                 IconButton(onClick = alAlternarFavorito) {
                     Icon(
@@ -292,7 +315,8 @@ fun TarjetaDestacado(
     esFavorito: Boolean = false,
     alAlternarFavorito: () -> Unit = {},
     alClic: () -> Unit,
-    modificador: Modifier = Modifier
+    modificador: Modifier = Modifier,
+    esNuevo: Boolean = false
 ) {
     Card(
         onClick = alClic,
@@ -351,29 +375,35 @@ fun TarjetaDestacado(
                         )
                     )
             )
-            // Placa de destacado (arriba a la izquierda)
-            Row(
+            // Placas (arriba a la izquierda): destacado y, si aplica, nuevo
+            Column(
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(12.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Color(0xFFFFB300))
-                    .padding(horizontal = 10.dp, vertical = 5.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(14.dp)
-                )
-                Text(
-                    "Destacado",
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color(0xFFFFB300))
+                        .padding(horizontal = 10.dp, vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Text(
+                        "Destacado",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+                if (esNuevo) PillNuevo()
             }
             // Corazón de favorito (arriba a la derecha)
             Box(
