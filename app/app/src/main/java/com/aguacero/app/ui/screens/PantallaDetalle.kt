@@ -243,7 +243,7 @@ fun PantallaDetalle(
                         val hoyIso = LocalDate.now().toString()
                         val fechasOrd = evento.fechasEfectivas()
                         val ordenadas = fechasOrd.filter { it >= hoyIso } + fechasOrd.filter { it < hoyIso }
-                        var verTodas by remember(evento.id) { mutableStateOf(false) }
+                        var verTodas by androidx.compose.runtime.remember(evento.id) { androidx.compose.runtime.mutableStateOf(false) }
                         val visibles = if (verTodas) ordenadas else ordenadas.take(3)
                         Column(modifier = Modifier.animateContentSize()) {
                             visibles.forEachIndexed { indice, fechaIso ->
