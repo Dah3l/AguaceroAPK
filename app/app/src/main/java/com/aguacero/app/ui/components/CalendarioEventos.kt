@@ -1,6 +1,7 @@
 package com.aguacero.app.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -91,25 +92,20 @@ fun MesCalendario(
                                     .size(40.dp)
                                     .clip(CircleShape)
                                     .background(if (esHoy) AzulFondo else Color.Transparent)
+                                    .then(
+                                        if (tieneEventos)
+                                            Modifier.border(1.5.dp, AzulPrimario, CircleShape)
+                                        else Modifier
+                                    )
                                     .clickable { alSeleccionar(fecha) },
                                 contentAlignment = Alignment.Center
                             ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        "${fecha.dayOfMonth}",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = if (esHoy) FontWeight.Bold else FontWeight.Normal,
-                                        color = AzulOscuro
-                                    )
-                                    if (tieneEventos) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(4.dp)
-                                                .clip(CircleShape)
-                                                .background(AzulPrimario)
-                                        )
-                                    }
-                                }
+                                Text(
+                                    "${fecha.dayOfMonth}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = if (esHoy || tieneEventos) FontWeight.Bold else FontWeight.Normal,
+                                    color = if (tieneEventos) AzulPrimario else AzulOscuro
+                                )
                             }
                         }
                     }
