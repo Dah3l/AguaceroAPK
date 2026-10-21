@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.aguacero.app.ui.ModeloCartelera
 import com.aguacero.app.ui.RangoFecha
 import com.aguacero.app.ui.components.ChipModerno
+import com.aguacero.app.ui.components.TituloPestana
 import com.aguacero.app.ui.components.MesCalendario
 import com.aguacero.app.util.aLocalDate
 import java.time.YearMonth
@@ -58,6 +60,11 @@ fun PantallaCalendario(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+        TituloPestana(
+            "Calendario de eventos",
+            modificador = Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 4.dp)
+        )
+
         // Filtros rápidos de fecha
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
