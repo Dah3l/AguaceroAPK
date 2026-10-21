@@ -204,6 +204,31 @@
       "fechaPublicacion": "2026-10-18T17:28:31.318136+00:00"
     },
     {
+      "id": "mvi9oxjv3dcq1k",
+      "titulo": "Fiesta de Disfraces en Halloween",
+      "descripcion": "Te invitamos a una fiesta de disfraces en el Bar EFE para celebrar el día de las brujas, con estilo y mucho ritmo. ",
+      "fecha": "2026-10-31",
+      "hora": "10:00",
+      "horaApertura": "09:30",
+      "horaFin": "04:00",
+      "lugar": "Bar EFE",
+      "direccion": "Calle 23 e/ E y F, Vedado",
+      "precio": "500 CUP",
+      "contacto": [
+        "+53 56803949"
+      ],
+      "correo": "",
+      "fechas": [
+        "2026-10-31"
+      ],
+      "linkWeb": null,
+      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792596518357-f0jmkk.jpg",
+      "categoriaId": "festividad",
+      "organizador": "Wow Project",
+      "destacado": true,
+      "fechaPublicacion": "2026-10-21T15:28:54.76225+00:00"
+    },
+    {
       "id": "a1b2c3d4-0003-4000-8000-000000000003",
       "titulo": "Exposición 'La Habana en Azul'",
       "descripcion": "Inauguración de la exposición colectiva de pintura contemporánea en el Centro Wilfredo Lam. Obras de diez artistas jóvenes cubanos. Entrada libre.",
