@@ -21,6 +21,7 @@ import com.aguacero.app.ui.components.ChipModerno
 import com.aguacero.app.ui.components.TituloPestana
 import com.aguacero.app.ui.components.MesCalendario
 import com.aguacero.app.util.aLocalDate
+import com.aguacero.app.util.fechasEfectivas
 import java.time.YearMonth
 
 /**
@@ -42,8 +43,10 @@ fun PantallaCalendario(
         RangoFecha.ESTE_FINDE to "Este finde"
     )
 
-    val fechasConEventos = estado.eventos.mapNotNull {
-        try { it.fecha.aLocalDate() } catch (e: Exception) { null }
+    val fechasConEventos = estado.eventos.flatMap { ev ->
+        ev.fechasEfectivas().mapNotNull { iso ->
+            try { iso.aLocalDate() } catch (e: Exception) { null }
+        }
     }.toSet()
 
     // Meses dinámicos: desde hoy hasta el mes del evento más lejano
