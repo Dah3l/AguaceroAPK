@@ -84,16 +84,18 @@ fun TarjetaEvento(
 ) {
     Card(
         onClick = alClic,
-        modifier = modificador.fillMaxWidth(),
+        modifier = modificador
+            .fillMaxWidth()
+            .aspectRatio(3f / 4f),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column {
+        Column(modifier = Modifier.fillMaxSize()) {
             // Imagen del flyer con badge de fecha superpuesto
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(3f / 4f)
+                    .weight(1f)
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             ) {
             SubcomposeAsyncImage(
