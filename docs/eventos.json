@@ -51,6 +51,35 @@
   ],
   "eventos": [
     {
+      "id": "mve2e2j307vklr",
+      "titulo": "Evento de prueba",
+      "descripcion": "Evento de prueba ",
+      "fecha": "2026-10-02",
+      "hora": "14:00",
+      "horaApertura": "13:52",
+      "horaFin": "20:00",
+      "lugar": "Sala Charlie Chaplin",
+      "direccion": "Calle 23 e/ L y M, Vedado",
+      "precio": "100 CUP",
+      "contacto": [
+        "+53 56803949"
+      ],
+      "correo": "dahelalvarado@gmail.com",
+      "fechas": [
+        "2026-10-02",
+        "2026-10-29",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-11-01"
+      ],
+      "linkWeb": "https://golazostore.havanashop227.workers.dev",
+      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792361974650-k6an0g.jpg",
+      "categoriaId": "cine",
+      "organizador": "ICAIC",
+      "destacado": true,
+      "fechaPublicacion": "2026-10-18T16:53:25.079407+00:00"
+    },
+    {
       "id": "mve5ssveuefbr5",
       "titulo": "UwU",
       "descripcion": "Prueba awaaaa ",
@@ -148,32 +177,6 @@
       "organizador": "Teatro Villanueva",
       "destacado": false,
       "fechaPublicacion": "2026-10-16T09:30:00+00:00"
-    },
-    {
-      "id": "mve2e2j307vklr",
-      "titulo": "Evento de prueba",
-      "descripcion": "Evento de prueba ",
-      "fecha": "2026-10-30",
-      "hora": "14:00",
-      "horaApertura": "13:52",
-      "horaFin": "20:00",
-      "lugar": "Sala Charlie Chaplin",
-      "direccion": "Calle 23 e/ L y M, Vedado",
-      "precio": "100 CUP",
-      "contacto": [
-        "+53 56803949"
-      ],
-      "correo": "dahelalvarado@gmail.com",
-      "fechas": [
-        "2026-10-30",
-        "2026-10-31"
-      ],
-      "linkWeb": "https://golazostore.havanashop227.workers.dev",
-      "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792361974650-k6an0g.jpg",
-      "categoriaId": "cine",
-      "organizador": "ICAIC",
-      "destacado": true,
-      "fechaPublicacion": "2026-10-18T16:53:25.079407+00:00"
     },
     {
       "id": "mve3n7ha7mbqyo",
