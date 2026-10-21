@@ -83,7 +83,10 @@ fun PantallaCalendario(
         }
 
         // Calendario con scroll (sin flechas)
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 110.dp)
+        ) {
             items(meses, key = { it.toString() }) { mes ->
                 MesCalendario(
                     mes = mes,
