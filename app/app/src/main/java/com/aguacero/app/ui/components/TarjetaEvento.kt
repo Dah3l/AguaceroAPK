@@ -44,6 +44,7 @@ import com.aguacero.app.R
 import com.aguacero.app.model.Categoria
 import com.aguacero.app.model.Evento
 import com.aguacero.app.util.aLocalDate
+import com.aguacero.app.util.proximaFecha
 import com.aguacero.app.util.formatearFechaCorta
 import java.time.format.TextStyle
 import java.util.Locale
@@ -132,7 +133,7 @@ fun TarjetaEvento(
             }
 
             // Badge de fecha (día + mes) superpuesto
-            val f = evento.fecha.aLocalDate()
+            val f = evento.proximaFecha().aLocalDate()
             if (f != null) {
                 Column(
                     modifier = Modifier
@@ -189,7 +190,7 @@ fun TarjetaEvento(
             Spacer(Modifier.height(6.dp))
 
             Text(
-                text = "📅 ${formatearFechaCorta(evento.fecha)} · 🕐 ${evento.hora}",
+                text = "📅 ${formatearFechaCorta(evento.proximaFecha())} · 🕐 ${evento.hora}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(horizontal = 14.dp)
@@ -399,7 +400,7 @@ fun TarjetaDestacado(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = formatearFechaCorta(evento.fecha),
+                    text = formatearFechaCorta(evento.proximaFecha()),
                     style = MaterialTheme.typography.labelLarge,
                     color = Color.White.copy(alpha = 0.9f)
                 )
