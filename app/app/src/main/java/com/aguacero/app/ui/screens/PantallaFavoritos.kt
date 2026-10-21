@@ -55,7 +55,7 @@ fun PantallaFavoritos(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit)
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(14.dp),
+            contentPadding = PaddingValues(start = 14.dp, end = 14.dp, top = 14.dp, bottom = 110.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
         items(eventos, key = { it.id }) { evento ->
