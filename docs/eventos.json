@@ -154,20 +154,21 @@
       "titulo": "Evento de prueba",
       "descripcion": "Evento de prueba ",
       "fecha": "2026-10-30",
-      "hora": "14:52",
+      "hora": "14:00",
       "horaApertura": "13:52",
-      "horaFin": null,
+      "horaFin": "20:00",
       "lugar": "Sala Charlie Chaplin",
       "direccion": "Calle 23 e/ L y M, Vedado",
-      "precio": "100 CUP general",
+      "precio": "100 CUP",
       "contacto": [
         "+53 56803949"
       ],
-      "correo": "",
+      "correo": "dahelalvarado@gmail.com",
       "fechas": [
-        "2026-10-30"
+        "2026-10-30",
+        "2026-10-31"
       ],
-      "linkWeb": null,
+      "linkWeb": "https://golazostore.havanashop227.workers.dev",
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792361974650-k6an0g.jpg",
       "categoriaId": "cine",
       "organizador": "ICAIC",
