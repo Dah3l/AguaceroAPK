@@ -68,12 +68,35 @@ class ModeloCartelera(app: Application) : AndroidViewModel(app) {
                         .sortedBy { it.proximaFecha() },
                     categorias = resultado.datos.categorias
                 )
+                if (!resultado.desdeCache) {
+                    detectarNovedades(resultado.datos.eventos.map { it.id }.toSet())
+                }
             } catch (e: Exception) {
                 _estado.value = _estado.value.copy(
                     cargando = false,
                     error = "No se pudo cargar la cartelera. Revisa tu conexión."
                 )
             }
+        }
+    }
+
+    /**
+     * Al abrir la app con datos frescos: marca los eventos nuevos como
+     * novedades (sin notificar) y actualiza los IDs vistos, para que el
+     * trabajador en segundo plano no avise por lo que ya se vio aquí.
+     */
+    private suspend fun detectarNovedades(idsActuales: Set<String>) {
+        try {
+            val vistos = preferencias.leerIdsVistos()
+            if (vistos.isEmpty()) {
+                preferencias.guardarIdsVistos(idsActuales)
+            } else {
+                val nuevos = idsActuales - vistos
+                if (nuevos.isNotEmpty()) preferencias.agregarNovedades(nuevos)
+                preferencias.guardarIdsVistos(idsActuales)
+            }
+        } catch (_: Exception) {
+            // La detección es secundaria: nunca debe tumbar la carga
         }
     }
 
