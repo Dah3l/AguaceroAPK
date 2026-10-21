@@ -93,6 +93,14 @@ class AlmacenPreferencias(private val contexto: Context) {
         }
     }
 
+    /** Quita un evento del conjunto de novedades (al abrir su detalle). */
+    suspend fun quitarNovedad(id: String) {
+        contexto.dataStore.edit { prefs ->
+            val actuales = prefs[CLAVE_NOVEDADES] ?: return@edit
+            prefs[CLAVE_NOVEDADES] = actuales - id
+        }
+    }
+
     suspend fun limpiarNovedades() {
         contexto.dataStore.edit { prefs -> prefs.remove(CLAVE_NOVEDADES) }
     }
