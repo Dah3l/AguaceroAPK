@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aguacero.app.data.AlmacenPreferencias
+import com.aguacero.app.ui.components.TituloPestana
 import com.aguacero.app.util.CrashReporter
 import com.aguacero.app.util.cancelarRevisionEventos
 import com.aguacero.app.util.programarRevisionEventos
@@ -73,6 +74,8 @@ fun PantallaAjustes(preferencias: AlmacenPreferencias) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        TituloPestana("Ajustes")
+
         // ---- Notificaciones ----
         Card(
             modifier = Modifier.fillMaxWidth(),
