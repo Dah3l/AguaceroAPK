@@ -214,7 +214,25 @@ fun crearCanalNotificaciones(contexto: Context) {
     gestor.createNotificationChannel(canal)
 }
 
-fun notificarNuevoEvento(contexto: Context, titulo: String, cuerpo: String) {
+fun notificarNuevoEvento(
+    contexto: Context,
+    titulo: String,
+    cuerpo: String,
+    idEvento: String? = null
+) {
+    // Al tocar la notificación se abre la app (y el detalle si hay evento)
+    val intent = Intent(contexto, com.aguacero.app.MainActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or
+            Intent.FLAG_ACTIVITY_SINGLE_TOP
+        if (idEvento != null) putExtra("evento_id", idEvento)
+    }
+    val pendiente = android.app.PendingIntent.getActivity(
+        contexto,
+        idEvento?.hashCode() ?: 0,
+        intent,
+        android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+    )
+
     val notificacion = NotificationCompat.Builder(
         contexto,
         contexto.getString(R.string.canal_notificaciones)
@@ -223,12 +241,13 @@ fun notificarNuevoEvento(contexto: Context, titulo: String, cuerpo: String) {
         .setContentTitle(titulo)
         .setContentText(cuerpo)
         .setStyle(NotificationCompat.BigTextStyle().bigText(cuerpo))
+        .setContentIntent(pendiente)
         .setAutoCancel(true)
         .build()
 
     val gestor = NotificationManagerCompat.from(contexto)
     try {
-        gestor.notify(titulo.hashCode(), notificacion)
+        gestor.notify(idEvento?.hashCode() ?: titulo.hashCode(), notificacion)
     } catch (_: SecurityException) {
         // Sin permiso de notificaciones concedido
     }
@@ -243,8 +262,11 @@ fun programarRevisionEventos(contexto: Context) {
 
     WorkManager.getInstance(contexto).enqueueUniquePeriodicWork(
         TrabajoNuevosEventos.NOMBRE_TRABAJO,
-        ExistingPeriodicWorkPolicy.KEEP,
-        PeriodicWorkRequestBuilder<TrabajoNuevosEventos>(6, java.util.concurrent.TimeUnit.HOURS)
+        ExistingPeriodicWorkPolicy.UPDATE,
+        PeriodicWorkRequestBuilder<TrabajoNuevosEventos>(
+            15, java.util.concurrent.TimeUnit.MINUTES,
+            5, java.util.concurrent.TimeUnit.MINUTES
+        )
             .setConstraints(restricciones)
             .build()
     )
