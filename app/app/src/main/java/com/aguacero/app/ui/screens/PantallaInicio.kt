@@ -212,8 +212,8 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                             )
                             androidx.compose.foundation.pager.HorizontalPager(
                                 state = estadoPager,
-                                contentPadding = PaddingValues(horizontal = 20.dp),
-                                pageSpacing = 8.dp,
+                                contentPadding = PaddingValues(horizontal = 56.dp),
+                                pageSpacing = 12.dp,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(bottom = 4.dp)
