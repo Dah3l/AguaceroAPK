@@ -190,7 +190,7 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                 val destacados = eventos.filter { it.destacado }.take(5)
                 val normales = eventos.filter { !it.destacado }
                 LazyColumn(
-                    contentPadding = PaddingValues(vertical = 14.dp),
+                    contentPadding = PaddingValues(top = 14.dp, bottom = 110.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
