@@ -7,6 +7,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -118,7 +120,10 @@ fun BarraNavegacion(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
-                            .clickable { alCambiar(indice) },
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { alCambiar(indice) },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
