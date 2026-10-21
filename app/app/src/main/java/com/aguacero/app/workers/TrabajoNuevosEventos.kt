@@ -6,12 +6,22 @@ import androidx.work.WorkerParameters
 import kotlinx.coroutines.flow.first
 import com.aguacero.app.data.AlmacenPreferencias
 import com.aguacero.app.data.RepositorioDatos
+import com.aguacero.app.util.formatearFechaCorta
 import com.aguacero.app.util.notificarNuevoEvento
+import com.aguacero.app.util.proximaFecha
 
 /**
- * Trabajo periódico (cada 6 horas) que revisa si hay eventos nuevos
- * en el JSON de GitHub Pages. Compara los IDs con la lista local de
- * eventos ya vistos y notifica: "Nuevo en Aguacero: [título]".
+ * Trabajo periódico (cada 15 minutos) que revisa si hay eventos nuevos
+ * en el JSON de GitHub Pages.
+ *
+ * Flujo: descarga condicional con ETag (si el servidor responde 304,
+ * no hay cambios y termina sin gastar datos) → compara los IDs con los
+ * ya vistos → la primera vez solo registra la base, sin avisar → si hay
+ * novedades las marca en el almacén y, con las notificaciones activas,
+ * avisa: 1 evento = notificación con su detalle (al tocarla abre el
+ * evento); varios = una sola notificación resumen (abre la app).
+ * Con las notificaciones desactivadas igual actualiza los vistos, para
+ * que al reactivarlas no caigan avisos viejos.
  */
 class TrabajoNuevosEventos(
     contextoAplicacion: Context,
@@ -26,40 +36,48 @@ class TrabajoNuevosEventos(
         val contexto = applicationContext
         val repositorio = RepositorioDatos(contexto)
         val preferencias = AlmacenPreferencias(contexto)
-
-        // Si el usuario desactivó las notificaciones, no hacer nada
         val activas = preferencias.notificacionesActivas.first()
-        if (!activas) return Result.success()
 
         return try {
-            // Forzar descarga para detectar cambios
-            val resultado = repositorio.obtener()
+            val resultado = repositorio.obtenerConETag(preferencias.leerETag())
+            val datos = resultado.datos ?: return Result.success() // 304: sin cambios
+            preferencias.guardarETag(resultado.etag)
+
+            val idsActuales = datos.eventos.map { it.id }.toSet()
             val idsVistos = preferencias.leerIdsVistos()
 
-            val nuevos = resultado.datos.eventos.filter { it.id !in idsVistos }
-
             if (idsVistos.isEmpty()) {
-                // Primera ejecución: solo registrar la base actual, sin avisar
-                preferencias.guardarIdsVistos(resultado.datos.eventos.map { it.id }.toSet())
+                // Primera ejecución: registrar la base actual, sin avisar
+                preferencias.guardarIdsVistos(idsActuales)
+                return Result.success()
+            }
+
+            val nuevos = datos.eventos.filter { it.id !in idsVistos }
+            // Los vistos siempre reflejan el catálogo actual
+            preferencias.guardarIdsVistos(idsActuales)
+            if (nuevos.isEmpty()) return Result.success()
+
+            preferencias.agregarNovedades(nuevos.map { it.id }.toSet())
+            if (!activas) return Result.success()
+
+            if (nuevos.size == 1) {
+                val ev = nuevos.first()
+                notificarNuevoEvento(
+                    contexto,
+                    "🌧️ Nuevo evento en Aguacero",
+                    "${ev.titulo} — ${formatearFechaCorta(ev.proximaFecha())} · ${ev.lugar}",
+                    idEvento = ev.id
+                )
             } else {
-                nuevos.forEachIndexed { indice, evento ->
-                    notificarNuevoEvento(
-                        contexto,
-                        "Nuevo en Aguacero",
-                        evento.titulo
-                    )
-                    // Pequeña pausa para que el sistema no agrupe mal las alertas
-                    if (indice < nuevos.size - 1) kotlinx.coroutines.delay(500)
-                }
-                if (nuevos.isNotEmpty()) {
-                    preferencias.guardarIdsVistos(
-                        idsVistos + nuevos.map { it.id }
-                    )
-                }
+                notificarNuevoEvento(
+                    contexto,
+                    "🌧️ Novedades en Aguacero",
+                    "${nuevos.size} eventos nuevos en la cartelera"
+                )
             }
             Result.success()
         } catch (_: Exception) {
-            // Sin conexión u otro error: reintentar más tarde
+            // Sin conexión u otro error: reintentar en la próxima ventana
             Result.retry()
         }
     }
