@@ -19,6 +19,9 @@ export interface Evento {
   fecha: string;
   hora: string;
   hora_apertura?: string;
+  hora_fin?: string;
+  correo?: string;
+  fechas?: string[];
   lugar: string;
   direccion: string;
   precio: string;
