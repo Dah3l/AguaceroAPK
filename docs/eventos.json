@@ -57,11 +57,16 @@
       "fecha": "2026-10-18",
       "hora": "16:25",
       "horaApertura": "17:25",
+      "horaFin": null,
       "lugar": "Sala Charlie Chaplin",
       "direccion": "Alamar Zona 7",
       "precio": "10",
       "contacto": [
         "+53 56803949"
+      ],
+      "correo": "",
+      "fechas": [
+        "2026-10-18"
       ],
       "linkWeb": null,
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792351615557-f7mn5d.jpg",
@@ -77,10 +82,15 @@
       "fecha": "2026-10-24",
       "hora": "10:00",
       "horaApertura": "09:30",
+      "horaFin": null,
       "lugar": "Esquina del Malecón, Prado",
       "direccion": "Prado y Malecón, Habana Vieja",
       "precio": "Gratis",
       "contacto": [],
+      "correo": "",
+      "fechas": [
+        "2026-10-24"
+      ],
       "linkWeb": null,
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792365681179-trs9e2.jpg",
       "categoriaId": "danza",
@@ -95,12 +105,17 @@
       "fecha": "2026-10-24",
       "hora": "14:00",
       "horaApertura": "13:30",
+      "horaFin": null,
       "lugar": "Galería 23 y 12",
       "direccion": "Calle 23 e/ 10 y 12, Vedado",
       "precio": "500 CUP",
       "contacto": [
         "+53 56803949",
         "correo@ejemplo.cu"
+      ],
+      "correo": "",
+      "fechas": [
+        "2026-10-24"
       ],
       "linkWeb": null,
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792372300225-c0vxa4.jpg",
@@ -116,11 +131,16 @@
       "fecha": "2026-10-25",
       "hora": "16:00",
       "horaApertura": "15:30",
+      "horaFin": null,
       "lugar": "Teatro Villanueva",
       "direccion": "Calle Tacón No. 16, entre Cuba y San Ignacio, Habana Vieja",
       "precio": "500 CUP niños / 1000 CUP adultos",
       "contacto": [
         "+53 72044444"
+      ],
+      "correo": "",
+      "fechas": [
+        "2026-10-25"
       ],
       "linkWeb": null,
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792365669115-xk4s2c.jpg",
@@ -136,11 +156,16 @@
       "fecha": "2026-10-30",
       "hora": "14:52",
       "horaApertura": "13:52",
+      "horaFin": null,
       "lugar": "Sala Charlie Chaplin",
       "direccion": "Calle 23 e/ L y M, Vedado",
       "precio": "100 CUP general",
       "contacto": [
         "+53 56803949"
+      ],
+      "correo": "",
+      "fechas": [
+        "2026-10-30"
       ],
       "linkWeb": null,
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792361974650-k6an0g.jpg",
@@ -156,11 +181,16 @@
       "fecha": "2026-10-30",
       "hora": "17:28",
       "horaApertura": "17:28",
+      "horaFin": null,
       "lugar": "Sala Charlie Chaplin",
       "direccion": "Calle 23 e/ L y M, Vedado",
       "precio": "250 CUP",
       "contacto": [
         "+53 56803949"
+      ],
+      "correo": "",
+      "fechas": [
+        "2026-10-30"
       ],
       "linkWeb": "https://tempohabana.example.com",
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792375604984-oisbhj.jpg",
@@ -176,11 +206,16 @@
       "fecha": "2026-11-05",
       "hora": "18:00",
       "horaApertura": null,
+      "horaFin": null,
       "lugar": "Centro de Arte Contemporáneo Wifredo Lam",
       "direccion": "Calle Obispo No. 160, Habana Vieja",
       "precio": "Entrada libre",
       "contacto": [
         "+53 78611886"
+      ],
+      "correo": "",
+      "fechas": [
+        "2026-11-05"
       ],
       "linkWeb": null,
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792365813023-8aimpx.jpg",
@@ -196,11 +231,16 @@
       "fecha": "2026-11-14",
       "hora": "19:00",
       "horaApertura": "17:00",
+      "horaFin": null,
       "lugar": "Tempo Habana",
       "direccion": "Calle B, 153 e/ Línea y Calzada, Vedado",
       "precio": "1000 CUP incluye trago",
       "contacto": [
         "+53 58335927"
+      ],
+      "correo": "",
+      "fechas": [
+        "2026-11-14"
       ],
       "linkWeb": "https://tempohabana.example.com",
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792365730365-ypqs53.jpg",
@@ -216,11 +256,16 @@
       "fecha": "2026-11-16",
       "hora": "15:00",
       "horaApertura": "15:00",
+      "horaFin": null,
       "lugar": "Avenida del Puerto",
       "direccion": "Avenida del Puerto, Habana Vieja",
       "precio": "Acceso libre",
       "contacto": [
         "+53 78605033"
+      ],
+      "correo": "",
+      "fechas": [
+        "2026-11-16"
       ],
       "linkWeb": null,
       "imagen": "https://ucwixevfwqlsbzqopqrk.supabase.co/storage/v1/object/public/flyers/1792365756851-wo5vxx.png",
@@ -236,11 +281,16 @@
       "fecha": "2026-12-02",
       "hora": "21:00",
       "horaApertura": "20:30",
+      "horaFin": null,
       "lugar": "Sala Charlie Chaplin",
       "direccion": "Calle 23 e/ L y M, Vedado",
       "precio": "100 CUP general",
       "contacto": [
         "+53 78321831"
+      ],
+      "correo": "",
+      "fechas": [
+        "2026-12-02"
       ],
       "linkWeb": null,
       "imagen": "",
