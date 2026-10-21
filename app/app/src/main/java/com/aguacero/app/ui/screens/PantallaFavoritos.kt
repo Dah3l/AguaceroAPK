@@ -1,6 +1,8 @@
 package com.aguacero.app.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.aguacero.app.ui.ModeloCartelera
 import com.aguacero.app.ui.components.EstadoVacio
+import com.aguacero.app.ui.components.TituloPestana
 import com.aguacero.app.ui.components.TarjetaEvento
 
 /**
@@ -27,34 +30,34 @@ fun PantallaFavoritos(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit)
     val favoritos by modelo.favoritos.collectAsState()
     val eventos = modelo.eventosFavoritos()
 
-    if (eventos.isEmpty()) {
-        if (favoritos.isEmpty()) {
-            EstadoVacio(
-                Icons.Filled.FavoriteBorder,
-                "Sin favoritos 🤍",
-                "Toca el corazón en cualquier evento para guardarlo aquí"
-            )
-        } else {
-            EstadoVacio(
-                Icons.Filled.Favorite,
-                "Tus favoritos ya pasaron",
-                "Se retiraron de la cartelera"
-            )
-        }
-        return
-    }
+    Column(modifier = Modifier.fillMaxSize()) {
+        TituloPestana(
+            "Tus eventos guardados ❤️",
+            modificador = Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 4.dp)
+        )
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(14.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
-    ) {
-        item {
-            Text(
-                "❤️ Tus eventos guardados",
-                style = MaterialTheme.typography.titleMedium
-            )
+        if (eventos.isEmpty()) {
+            if (favoritos.isEmpty()) {
+                EstadoVacio(
+                    Icons.Filled.FavoriteBorder,
+                    "Sin favoritos 🤍",
+                    "Toca el corazón en cualquier evento para guardarlo aquí"
+                )
+            } else {
+                EstadoVacio(
+                    Icons.Filled.Favorite,
+                    "Tus favoritos ya pasaron",
+                    "Se retiraron de la cartelera"
+                )
+            }
+            return@Column
         }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(14.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
         items(eventos, key = { it.id }) { evento ->
             TarjetaEvento(
                 evento = evento,
@@ -63,6 +66,7 @@ fun PantallaFavoritos(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit)
                 alClic = { alAbrirDetalle(evento.id) },
                 alAlternarFavorito = { modelo.alternarFavorito(evento.id) }
             )
+        }
         }
     }
 }
