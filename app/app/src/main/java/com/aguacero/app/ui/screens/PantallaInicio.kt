@@ -190,7 +190,7 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                 val destacados = eventos.filter { it.destacado }.take(5)
                 val normales = eventos.filter { !it.destacado }
                 LazyColumn(
-                    contentPadding = PaddingValues(14.dp),
+                    contentPadding = PaddingValues(vertical = 14.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -201,7 +201,7 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                                 "Destacados",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(vertical = 4.dp)
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
                             )
                         }
                         item(key = "destacados_carousel") {
@@ -212,8 +212,8 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                             )
                             androidx.compose.foundation.pager.HorizontalPager(
                                 state = estadoPager,
-                                contentPadding = PaddingValues(horizontal = 36.dp),
-                                pageSpacing = 14.dp,
+                                contentPadding = PaddingValues(horizontal = 20.dp),
+                                pageSpacing = 8.dp,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(bottom = 4.dp)
@@ -247,7 +247,8 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                             categoria = modelo.categoriaDe(evento),
                             esFavorito = favoritos.contains(evento.id),
                             alClic = { alAbrirDetalle(evento.id) },
-                            alAlternarFavorito = { modelo.alternarFavorito(evento.id) }
+                            alAlternarFavorito = { modelo.alternarFavorito(evento.id) },
+                            modificador = Modifier.padding(horizontal = 14.dp)
                         )
                     }
                     item { Spacer(Modifier.height(8.dp)) }
