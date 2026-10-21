@@ -57,6 +57,7 @@ import com.aguacero.app.ui.components.TarjetaEvento
 fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
     val estado by modelo.estado.collectAsState()
     val favoritos by modelo.favoritos.collectAsState()
+    val novedades by modelo.novedades.collectAsState()
 
     val pullState = rememberPullRefreshState(
         refreshing = estado.cargando,
@@ -227,6 +228,7 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                                     evento = evento,
                                     categoria = modelo.categoriaDe(evento),
                                     esFavorito = favoritos.contains(evento.id),
+                                    esNuevo = novedades.contains(evento.id),
                                     alAlternarFavorito = { modelo.alternarFavorito(evento.id) },
                                     alClic = { alAbrirDetalle(evento.id) },
                                     modificador = Modifier.graphicsLayer {
@@ -246,6 +248,7 @@ fun PantallaInicio(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
                             evento = evento,
                             categoria = modelo.categoriaDe(evento),
                             esFavorito = favoritos.contains(evento.id),
+                            esNuevo = novedades.contains(evento.id),
                             alClic = { alAbrirDetalle(evento.id) },
                             alAlternarFavorito = { modelo.alternarFavorito(evento.id) },
                             modificador = Modifier.padding(horizontal = 14.dp)
