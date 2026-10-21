@@ -296,8 +296,8 @@ fun TarjetaDestacado(
     Card(
         onClick = alClic,
         modifier = modificador
-            .width(270.dp)
-            .height(360.dp),
+            .fillMaxWidth()
+            .aspectRatio(3f / 4f),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
