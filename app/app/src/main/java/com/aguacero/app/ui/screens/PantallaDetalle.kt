@@ -1,6 +1,8 @@
 package com.aguacero.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.animation.animateContentSize
+import java.time.LocalDate
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.clickable
@@ -65,8 +67,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.aguacero.app.ui.ModeloCartelera
 import com.aguacero.app.util.abrirTelefono
-import com.aguacero.app.util.proximaFecha
-import com.aguacero.app.util.formatearFechaCorta
 import com.aguacero.app.util.fechasEfectivas
 import com.aguacero.app.util.abrirCorreo
 import com.aguacero.app.util.abrirWeb
@@ -239,26 +239,48 @@ fun PantallaDetalle(
                                 )
                             }
                         }
-                        val fechasEv = evento.fechasEfectivas()
-                        val fecha = if (fechasEv.size <= 1) {
-                            formatearFechaLarga(evento.proximaFecha())
-                        } else {
-                            fechasEv.joinToString(" · ") { formatearFechaCorta(it) }
-                        }
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                Icons.Filled.DateRange,
-                                contentDescription = null,
-                                tint = AzulPrimario,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                fecha,
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Medium,
-                                color = Color.DarkGray
-                            )
+                        // Fechas: lista vertical (próximas primero), máx. 3 visibles
+                        val hoyIso = LocalDate.now().toString()
+                        val fechasOrd = evento.fechasEfectivas()
+                        val ordenadas = fechasOrd.filter { it >= hoyIso } + fechasOrd.filter { it < hoyIso }
+                        var verTodas by remember(evento.id) { mutableStateOf(false) }
+                        val visibles = if (verTodas) ordenadas else ordenadas.take(3)
+                        Column(modifier = Modifier.animateContentSize()) {
+                            visibles.forEachIndexed { indice, fechaIso ->
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    if (indice == 0) {
+                                        Icon(
+                                            Icons.Filled.DateRange,
+                                            contentDescription = null,
+                                            tint = AzulPrimario,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    } else {
+                                        Spacer(Modifier.width(20.dp))
+                                    }
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        formatearFechaLarga(fechaIso),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium,
+                                        color = if (fechaIso < hoyIso) Color.Gray else Color.DarkGray
+                                    )
+                                }
+                                if (indice < visibles.lastIndex) Spacer(Modifier.height(6.dp))
+                            }
+                            if (ordenadas.size > 3) {
+                                Spacer(Modifier.height(8.dp))
+                                Row {
+                                    Spacer(Modifier.width(28.dp))
+                                    Text(
+                                        if (verTodas) "Ver menos" else "Ver todas (${ordenadas.size})",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = AzulPrimario,
+                                        modifier = Modifier.clickable { verTodas = !verTodas }
+                                    )
+                                }
+                            }
                         }
                         if (evento.hora.isNotBlank()) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
