@@ -22,18 +22,22 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       btn.textContent = 'Guardando…';
 
       const contactoRaw = (fd.get('contacto') as string ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
+      const fechasRaw = fd.getAll('fechas').map((s) => (s as string).trim()).filter(Boolean).sort();
 
       const { error } = await supabase.from('eventos').insert({
         id: nuevoId(),
         titulo: fd.get('titulo'),
         descripcion: fd.get('descripcion') || '',
-        fecha: fd.get('fecha'),
+        fecha: fechasRaw[0],
+        fechas: fechasRaw,
         hora: fd.get('hora'),
+        hora_fin: (fd.get('hora_fin') as string) || null,
         hora_apertura: (fd.get('hora_apertura') as string) || null,
         lugar: fd.get('lugar'),
         direccion: fd.get('direccion') || '',
         precio: fd.get('precio') || '',
         contacto: contactoRaw,
+        correo: (fd.get('correo') as string) || null,
         link_web: (fd.get('link_web') as string) || null,
         imagen: fd.get('imagen') || '',
         categoria_id: (fd.get('categoria_id') as string) || null,
