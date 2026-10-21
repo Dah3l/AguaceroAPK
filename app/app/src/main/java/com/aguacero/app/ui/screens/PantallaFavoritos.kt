@@ -28,6 +28,7 @@ import com.aguacero.app.ui.components.TarjetaEvento
 @Composable
 fun PantallaFavoritos(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit) {
     val favoritos by modelo.favoritos.collectAsState()
+    val novedades by modelo.novedades.collectAsState()
     val eventos = modelo.eventosFavoritos()
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -63,6 +64,7 @@ fun PantallaFavoritos(modelo: ModeloCartelera, alAbrirDetalle: (String) -> Unit)
                 evento = evento,
                 categoria = modelo.categoriaDe(evento),
                 esFavorito = true,
+                esNuevo = novedades.contains(evento.id),
                 alClic = { alAbrirDetalle(evento.id) },
                 alAlternarFavorito = { modelo.alternarFavorito(evento.id) }
             )
