@@ -94,6 +94,34 @@ class RepositorioDatos(private val contexto: Context) {
         return ResultadoDatos(fresca, desdeCache = false)
     }
 
+    /**
+     * Descarga condicional con ETag (la usa el trabajador de notificaciones):
+     * si el servidor responde 304, [ResultadoETag.datos] es null (sin cambios)
+     * y no se transfirió el cuerpo. Si hay datos, actualiza la caché local.
+     */
+    suspend fun obtenerConETag(etagPrevio: String?): ResultadoETag = withContext(Dispatchers.IO) {
+        val constructor = Request.Builder().url(URL_EVENTOS)
+        if (!etagPrevio.isNullOrBlank()) {
+            constructor.header("If-None-Match", etagPrevio)
+        }
+        clienteHttp.newCall(constructor.build()).execute().use { respuesta ->
+            when {
+                respuesta.code == 304 -> ResultadoETag(null, etagPrevio)
+                !respuesta.isSuccessful ->
+                    throw java.io.IOException("Error HTTP ${respuesta.code} al descargar eventos")
+                else -> {
+                    val cuerpo = respuesta.body?.string()
+                        ?: throw java.io.IOException("Respuesta vacía del servidor")
+                    val datos = json.decodeFromString(DatosAguacero.serializer(), cuerpo)
+                    archivoCache().writeText(cuerpo)
+                    ResultadoETag(datos, respuesta.header("ETag") ?: etagPrevio)
+                }
+            }
+        }
+    }
+
+    data class ResultadoETag(val datos: DatosAguacero?, val etag: String?)
+
     /** ¿La caché existe? (para saber si hay datos offline) */
     fun hayCache(): Boolean = archivoCache().exists()
 
