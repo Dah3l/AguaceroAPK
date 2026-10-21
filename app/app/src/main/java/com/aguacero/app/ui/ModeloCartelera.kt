@@ -46,6 +46,20 @@ class ModeloCartelera(app: Application) : AndroidViewModel(app) {
     private val _estado = MutableStateFlow(EstadoUI())
     val estado: StateFlow<EstadoUI> = _estado.asStateFlow()
 
+    /** Novedades: eventos nuevos detectados y aún no revisados. */
+    val novedades: StateFlow<Set<String>> = preferencias.novedades
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+
+    /** Marca todas las novedades como vistas (al abrir la campana). */
+    fun marcarNovedadesVistas() {
+        viewModelScope.launch { preferencias.limpiarNovedades() }
+    }
+
+    /** Quita un evento de las novedades (al abrir su detalle). */
+    fun quitarNovedad(id: String) {
+        viewModelScope.launch { preferencias.quitarNovedad(id) }
+    }
+
     /** Favoritos guardados localmente con DataStore. */
     val favoritos: StateFlow<Set<String>> = preferencias.favoritos
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
