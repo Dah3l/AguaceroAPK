@@ -45,6 +45,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,18 +68,21 @@ import com.aguacero.app.ui.screens.PantallaCalendario
 import com.aguacero.app.ui.screens.PantallaDetalle
 import com.aguacero.app.ui.screens.PantallaFavoritos
 import com.aguacero.app.ui.screens.PantallaInicio
+import com.aguacero.app.ui.screens.PantallaNovedades
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.aguacero.app.ui.theme.TemaAguacero
 import com.aguacero.app.util.crearCanalNotificaciones
 import com.aguacero.app.util.programarRevisionEventos
 import kotlinx.coroutines.flow.first
+import com.aguacero.app.util.proximaFecha
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 
 /**
  * Actividad principal de Aguacero. Navegación por pestañas:
  * Inicio, Calendario, Favoritos y Ajustes; el detalle se abre como capa.
- * Menú lateral con Licencia y Acerca de; campana reservada para
- * el futuro sistema de notificaciones.
+ * Menú lateral con Licencia y Acerca de; campana con el centro
+ * de novedades del sistema de notificaciones.
  */
 class MainActivity : ComponentActivity() {
 
@@ -143,6 +147,16 @@ fun AppAguacero(
             alConsumirEvento()
         }
     }
+
+    // Novedades (campana): contador y foto de la lista al abrirla
+    val estadoApp by modelo.estado.collectAsState()
+    val novedadesApp by modelo.novedades.collectAsState()
+    var snapshotNovedades by remember { mutableStateOf<List<String>?>(null) }
+
+    // Al abrir un detalle, ese evento deja de ser novedad
+    LaunchedEffect(eventoAbierto) {
+        eventoAbierto?.let { modelo.quitarNovedad(it) }
+    }
     val estadoCajon = rememberDrawerState(DrawerValue.Closed)
     val alcance = rememberCoroutineScope()
     var dialogoMenu by remember { mutableStateOf<String?>(null) }
@@ -158,6 +172,24 @@ fun AppAguacero(
             modelo = modelo,
             idEvento = idDetalle,
             alVolver = { eventoAbierto = null }
+        )
+        return
+    }
+
+    // ---- Vista de novedades (capa completa, sobre la campana) ----
+    val idsNovedades = snapshotNovedades
+    if (idsNovedades != null) {
+        androidx.activity.compose.BackHandler {
+            snapshotNovedades = null
+        }
+        PantallaNovedades(
+            modelo = modelo,
+            ids = idsNovedades,
+            alVolver = { snapshotNovedades = null },
+            alAbrirDetalle = { id ->
+                snapshotNovedades = null
+                eventoAbierto = id
+            }
         )
         return
     }
@@ -300,13 +332,42 @@ fun AppAguacero(
                             color = Color.White
                         )
                         Spacer(Modifier.weight(1f))
-                        // Campana: futura sede del sistema de notificaciones
-                        IconButton(onClick = { }) {
-                            Icon(
-                                Icons.Filled.Notifications,
-                                contentDescription = "Notificaciones",
-                                tint = Color.White
-                            )
+                        // Campana: centro de novedades con contador
+                        val conteoNovedades = novedadesApp.count { id ->
+                            estadoApp.eventos.any { ev -> ev.id == id }
+                        }
+                        Box {
+                            IconButton(onClick = {
+                                snapshotNovedades = estadoApp.eventos
+                                    .filter { it.id in novedadesApp }
+                                    .sortedBy { it.proximaFecha() }
+                                    .map { it.id }
+                                modelo.marcarNovedadesVistas()
+                            }) {
+                                Icon(
+                                    Icons.Filled.Notifications,
+                                    contentDescription = "Notificaciones",
+                                    tint = Color.White
+                                )
+                            }
+                            if (conteoNovedades > 0) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(top = 6.dp, end = 6.dp)
+                                        .size(18.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFE53935)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        conteoNovedades.toString(),
+                                        color = Color.White,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
                     }
                 }
