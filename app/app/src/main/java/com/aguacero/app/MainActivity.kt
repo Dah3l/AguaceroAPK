@@ -5,6 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -222,6 +227,14 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
                                 tint = Color.White
                             )
                         }
+                        Image(
+                            painter = painterResource(R.drawable.logo_aguacero),
+                            contentDescription = "Logo Aguacero",
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                        )
+                        Spacer(Modifier.width(8.dp))
                         Text(
                             "Aguacero",
                             style = MaterialTheme.typography.titleLarge,
