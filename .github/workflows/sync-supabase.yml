@@ -33,7 +33,7 @@ jobs:
           eventos = get('eventos', '&order=fecha.asc,hora.asc&publicado=eq.true')
           salida = {
               "categorias": [{"id": c["id"], "nombre": c["nombre"], "emoji": c["emoji"], "color": c["color"]} for c in categorias],
-              "eventos": [{"id": e["id"], "titulo": e["titulo"], "descripcion": e.get("descripcion") or "", "fecha": e["fecha"], "hora": (e["hora"] or "")[:5], "horaApertura": (e.get("hora_apertura") or "")[:5] or None, "lugar": e["lugar"], "direccion": e.get("direccion") or "", "precio": e.get("precio") or "", "contacto": e.get("contacto") or [], "linkWeb": e.get("link_web"), "imagen": e.get("imagen") or "", "categoriaId": e.get("categoria_id"), "organizador": e.get("organizador") or "", "destacado": bool(e.get("destacado")), "fechaPublicacion": e.get("fecha_publicacion") or ""} for e in eventos]
+              "eventos": [{"id": e["id"], "titulo": e["titulo"], "descripcion": e.get("descripcion") or "", "fecha": e["fecha"], "hora": (e["hora"] or "")[:5], "horaApertura": (e.get("hora_apertura") or "")[:5] or None, "horaFin": (e.get("hora_fin") or "")[:5] or None, "lugar": e["lugar"], "direccion": e.get("direccion") or "", "precio": e.get("precio") or "", "contacto": e.get("contacto") or [], "correo": e.get("correo") or "", "fechas": e.get("fechas") or [e["fecha"]], "linkWeb": e.get("link_web"), "imagen": e.get("imagen") or "", "categoriaId": e.get("categoria_id"), "organizador": e.get("organizador") or "", "destacado": bool(e.get("destacado")), "fechaPublicacion": e.get("fecha_publicacion") or ""} for e in eventos]
           }
           with open('docs/eventos.json', 'w', encoding='utf-8') as f:
               json.dump(salida, f, ensure_ascii=False, indent=2)
