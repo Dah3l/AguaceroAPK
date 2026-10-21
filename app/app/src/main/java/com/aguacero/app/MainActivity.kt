@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -202,6 +204,7 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
             }
         }
     ) {
+      Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             containerColor = Color.Transparent,
             topBar = {
@@ -254,14 +257,6 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
                     }
                 }
             },
-            bottomBar = {
-                Box(modifier = Modifier.background(Color.Transparent)) {
-                    BarraNavegacion(
-                        pestanaActual = pestana,
-                        alCambiar = { pestana = it }
-                    )
-                }
-            }
         ) { valoresInternos ->
             Box(modifier = Modifier.padding(valoresInternos)) {
                 when (pestana) {
@@ -272,5 +267,15 @@ fun AppAguacero(modelo: ModeloCartelera = viewModel()) {
                 }
             }
         }
+
+        // Navbar flotante SOBRE el contenido (sin franja reservada detrás)
+        BarraNavegacion(
+            pestanaActual = pestana,
+            alCambiar = { pestana = it },
+            modificador = Modifier
+                .align(Alignment.BottomCenter)
+                .windowInsetsPadding(WindowInsets.navigationBars)
+        )
+      }
     }
 }
